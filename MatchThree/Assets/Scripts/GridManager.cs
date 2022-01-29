@@ -6,14 +6,16 @@ public class GridManager : Singleton<GridManager>
 {
     public List<Sprite> Sprites = new List<Sprite>();
     public GameObject TilePrefab;
-    public int GridDimension = 8;
+    //public int GridDimension = 8;
+    public int Row = 8;
+    public int Coloum = 8;
     public float Distance = 1.0f;
     private GameObject[,] Grid;
 
     // Start is called before the first frame update
     void Start()
     {
-        Grid = new GameObject[GridDimension, GridDimension];
+        Grid = new GameObject[Coloum, Row];
         InitGrid();
     }
     /// <summary>
@@ -22,9 +24,9 @@ public class GridManager : Singleton<GridManager>
 
     void InitGrid()
     {
-        Vector3 positionOffset = transform.position - new Vector3(GridDimension * Distance / 2.0f, GridDimension * Distance / 2.0f, 0); 
-        for (int row = 0; row < GridDimension; row++)
-            for (int column = 0; column < GridDimension; column++) 
+        Vector3 positionOffset = transform.position - new Vector3(Coloum * Distance / 2.0f, Row * Distance / 2.0f, 0); 
+        for (int row = 0; row < Row; row++)
+            for (int column = 0; column < Coloum; column++) 
             {
                 GameObject newTile = Instantiate(TilePrefab); 
                 SpriteRenderer renderer = newTile.GetComponent<SpriteRenderer>(); 
@@ -33,7 +35,8 @@ public class GridManager : Singleton<GridManager>
                 tile.Position = new Vector2Int(column, row);
                 newTile.transform.parent = transform; 
                 newTile.transform.position = new Vector3(column * Distance, row * Distance, 0) + positionOffset; 
-                Grid[column, row] = newTile;            }
+                Grid[column, row] = newTile;            
+            }
     }
     /// <summary>
     /// this function will swap the the tiles 
@@ -77,8 +80,8 @@ public class GridManager : Singleton<GridManager>
     /// <returns></returns>
     SpriteRenderer GetSpriteRendererAt(int column, int row)
     {
-        if (column < 0 || column >= GridDimension
-             || row < 0 || row >= GridDimension)
+        if (column < 0 || column >= Coloum
+             || row < 0 || row >= Row)
             return null;
         GameObject tile = Grid[column, row];
         SpriteRenderer renderer = tile.GetComponent<SpriteRenderer>();
@@ -88,9 +91,9 @@ public class GridManager : Singleton<GridManager>
     bool CheckMatches()
     {
         HashSet<SpriteRenderer> matchedTiles = new System.Collections.Generic.HashSet<SpriteRenderer>();
-        for (int row = 0; row < GridDimension; row++)
+        for (int row = 0; row < Row; row++)
         {
-            for (int column = 0; column < GridDimension; column++)
+            for (int column = 0; column < Coloum; column++)
             {
                 SpriteRenderer current = GetSpriteRendererAt(column, row);
 
@@ -120,7 +123,7 @@ public class GridManager : Singleton<GridManager>
     private List<SpriteRenderer> FindRowMatchForTile(int column, int row, Sprite sprite)
     {
         List<SpriteRenderer> result = new List<SpriteRenderer>();
-        for (int i = row + 1; i < GridDimension; i++)
+        for (int i = row + 1; i < Row; i++)
         {
             SpriteRenderer nextRow = GetSpriteRendererAt(column, i);
             if (nextRow.sprite != sprite)
@@ -135,7 +138,7 @@ public class GridManager : Singleton<GridManager>
     private List<SpriteRenderer> FindColumnMatchForTile(int column, int row, Sprite sprite)
     {
         List<SpriteRenderer> result = new List<SpriteRenderer>();
-        for (int i = column + 1; i < GridDimension; i++)
+        for (int i = column + 1; i < Coloum; i++)
         {
             SpriteRenderer nextColumn = GetSpriteRendererAt(i, row);
             if (nextColumn.sprite != sprite)
@@ -149,19 +152,19 @@ public class GridManager : Singleton<GridManager>
 
     void FillHoles()
     {
-        for (int column = 0; column < GridDimension; column++)
+        for (int column = 0; column < Coloum; column++)
         {
-            for (int row = 0; row < GridDimension; row++)
+            for (int row = 0; row < Row; row++)
             {
                 while (GetSpriteRendererAt(column, row).sprite == null)
                 {
-                    for (int filler = row; filler < GridDimension - 1; filler++)
+                    for (int filler = row; filler < Row - 1; filler++)
                     {
                         SpriteRenderer current = GetSpriteRendererAt(column, filler); 
                         SpriteRenderer next = GetSpriteRendererAt(column, filler + 1);
                         current.sprite = next.sprite;
                     }
-                    SpriteRenderer last = GetSpriteRendererAt(column, GridDimension - 1);
+                    SpriteRenderer last = GetSpriteRendererAt(column, Coloum - 1);
                     last.sprite = Sprites[Random.Range(0, Sprites.Count)];
                 }
             }

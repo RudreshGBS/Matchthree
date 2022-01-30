@@ -81,8 +81,11 @@ public class GridManager : Singleton<GridManager>
     SpriteRenderer GetSpriteRendererAt(int column, int row)
     {
         if (column < 0 || column >= Coloum
-             || row < 0 || row >= Row)
+             || row < 0 || row >= Row) 
+        {
+            Debug.LogError($"issue occred column :{column} ,row: {row} ");
             return null;
+        }
         GameObject tile = Grid[column, row];
         SpriteRenderer renderer = tile.GetComponent<SpriteRenderer>();
         return renderer;
@@ -158,14 +161,15 @@ public class GridManager : Singleton<GridManager>
             {
                 while (GetSpriteRendererAt(column, row).sprite == null)
                 {
+                    SpriteRenderer current = GetSpriteRendererAt(column, row);
+                    SpriteRenderer next = current;
                     for (int filler = row; filler < Row - 1; filler++)
                     {
-                        SpriteRenderer current = GetSpriteRendererAt(column, filler); 
-                        SpriteRenderer next = GetSpriteRendererAt(column, filler + 1);
+                        next = GetSpriteRendererAt(column, filler + 1);
                         current.sprite = next.sprite;
+                        current = next;
                     }
-                    SpriteRenderer last = GetSpriteRendererAt(column, Coloum - 1);
-                    last.sprite = Sprites[Random.Range(0, Sprites.Count)];
+                    next.sprite = Sprites[Random.Range(0, Sprites.Count)];
                 }
             }
         }

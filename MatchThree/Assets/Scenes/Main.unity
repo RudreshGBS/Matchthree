@@ -167,17 +167,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Sprites:
-  - {fileID: 21300000, guid: 83ee70cddebee534a8c39685ba3f6333, type: 3}
-  - {fileID: 21300000, guid: bfeb4f3208d6771418c286333b7eadd0, type: 3}
-  - {fileID: 21300000, guid: 42b822c826a686e489fbd15db6d2adc1, type: 3}
-  - {fileID: 21300000, guid: 6ab34ff611f1fed4ea1c17a6e0704711, type: 3}
-  - {fileID: 21300000, guid: 6c270714450500b4da294c3f39fbe6f2, type: 3}
-  - {fileID: 21300000, guid: 576ab37898c85864985118f3b522b9a0, type: 3}
-  - {fileID: 21300000, guid: 7fdcd5974e62fcd409aa43d66c1b0fa1, type: 3}
-  - {fileID: 21300000, guid: 25b7705f73b8cc84394519809caaae83, type: 3}
-  - {fileID: 21300000, guid: 7ed7ec981abd75e49964c15ad9df0cf0, type: 3}
+  - {fileID: 21300000, guid: 1d602dda8985cb540be0eb01c15a84a3, type: 3}
+  - {fileID: 21300000, guid: c513d9b2ec1626540b6ab4b3ba13d636, type: 3}
+  - {fileID: 21300000, guid: 07ca4b35ae4b3c643bd647abe2465f16, type: 3}
+  - {fileID: 21300000, guid: b701c31f4c7031b409d667d186c2afc7, type: 3}
+  - {fileID: 21300000, guid: 4d2b76174406dd148a8bb7745c11d658, type: 3}
   TilePrefab: {fileID: 8240428727968202350, guid: 3207d6cefe6d64d4c9986bb5143433a2, type: 3}
-  Row: 8
+  Row: 9
   Coloum: 5
   Distance: 1
 --- !u!1 &519420028
@@ -320,7 +316,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -2
-  m_Sprite: {fileID: 21300000, guid: 39a618e14186f4503879b1fce60ccfef, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c7fc533af39b2ae42beb717c7481e956, type: 3}
   m_Color: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -340,7 +336,7 @@ Transform:
   m_GameObject: {fileID: 1087857770}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.1, y: 1.1, z: 1.1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2

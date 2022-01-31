@@ -1,4 +1,5 @@
 ﻿using rudscreation.Utils;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ public class GridManager : Singleton<GridManager>
 
     void InitGrid()
     {
-        Vector3 positionOffset = transform.position - new Vector3(Coloum * Distance / 2.0f, Row * Distance / 2.0f, 0); 
+        Vector3 positionOffset = transform.position - new Vector3(Coloum * Distance / 2.0f, Row * Distance / 2.0f, 0) + Vector3.right*Distance/2; 
         for (int row = 0; row < Row; row++)
             for (int column = 0; column < Coloum; column++) 
             {
@@ -35,7 +36,7 @@ public class GridManager : Singleton<GridManager>
                 tile.Position = new Vector2Int(column, row);
                 newTile.transform.parent = transform; 
                 newTile.transform.position = new Vector3(column * Distance, row * Distance, 0) + positionOffset; 
-                Grid[column, row] = newTile;            
+                Grid[column, row] = newTile;
             }
     }
     /// <summary>
@@ -46,13 +47,42 @@ public class GridManager : Singleton<GridManager>
     public void SwapTiles(Vector2Int tile1Position, Vector2Int tile2Position)
     {
 
-       
+
         GameObject tile1 = Grid[tile1Position.x, tile1Position.y];
         SpriteRenderer renderer1 = tile1.GetComponent<SpriteRenderer>();
 
         GameObject tile2 = Grid[tile2Position.x, tile2Position.y];
         SpriteRenderer renderer2 = tile2.GetComponent<SpriteRenderer>();
+   
+        Hashtable paramHashtable = new Hashtable();
+        paramHashtable.Add("value1", renderer1);
+        paramHashtable.Add("value2", renderer2);
+        paramHashtable.Add("value3", tile1.transform);
+        paramHashtable.Add("value4", tile2.transform);
+        iTween.MoveTo(tile1, iTween.Hash(
+            "position", tile2.transform.position,
+            "islocal", true,
+            "easetype", iTween.EaseType.linear,
+            "time", 0.2f
+            )); ;
+        iTween.MoveTo(tile2, iTween.Hash(
+            "position", tile1.transform.position,
+            "islocal", true,
+            "easetype", iTween.EaseType.linear,
+            "time", 0.2f,
+            "oncompletetarget", gameObject,
+            "oncomplete", "SwapPostAnimation",
+            "oncompleteparams", paramHashtable
+            ));
+        //SwapPostAnimation(renderer1, renderer2);
+    }
 
+    private void SwapPostAnimation(Hashtable paramHashtable)
+    {
+        var renderer1 = (SpriteRenderer)paramHashtable["value1"];
+        var renderer2 = (SpriteRenderer)paramHashtable["value2"];
+        var tile1 = (Transform)paramHashtable["value3"];
+        var tile2 = (Transform)paramHashtable["value4"];
         Sprite temp = renderer1.sprite;
         renderer1.sprite = renderer2.sprite;
         renderer2.sprite = temp;
@@ -60,18 +90,33 @@ public class GridManager : Singleton<GridManager>
         bool changesOccurs = CheckMatches();
         if (!changesOccurs)
         {
+            iTween.MoveTo(tile1.gameObject, iTween.Hash(
+            "position", tile2.transform.position,
+            "islocal", true,
+            "easetype", iTween.EaseType.linear,
+            "time", 0.1f
+            ));
+            iTween.MoveTo(tile2.gameObject, iTween.Hash(
+            "position", tile1.transform.position,
+            "islocal", true,
+            "easetype", iTween.EaseType.linear,
+            "time", 0.1f));
             temp = renderer1.sprite;
             renderer1.sprite = renderer2.sprite;
             renderer2.sprite = temp;
         }
         else
         {
+            var tempPos = tile1.transform.position;
+            tile1.position = tile2.position;
+            tile2.position = tempPos;
             do
             {
                 FillHoles();
             } while (CheckMatches());
         }
     }
+
     /// <summary>
     /// this will retrn sprit rander 
     /// </summary>

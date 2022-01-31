@@ -110,10 +110,13 @@ public class GridManager : Singleton<GridManager>
             var tempPos = tile1.transform.position;
             tile1.position = tile2.position;
             tile2.position = tempPos;
-            do
-            {
-                FillHoles();
-            } while (CheckMatches());
+            StartCoroutine(FillHoles());
+
+            //do
+            //{
+            //FillHoles();
+            Debug.Log("Fill the holes");
+            //} while (CheckMatches());
         }
     }
 
@@ -163,6 +166,7 @@ public class GridManager : Singleton<GridManager>
 
         foreach (SpriteRenderer renderer in matchedTiles)
         {
+            renderer.transform.GetChild(0).gameObject.SetActive(true);
             renderer.sprite = null;
         }
         return matchedTiles.Count > 0;
@@ -198,8 +202,9 @@ public class GridManager : Singleton<GridManager>
         return result;
     }
 
-    void FillHoles()
+    IEnumerator FillHoles()
     {
+        yield return new WaitForSeconds(0.6f);
         for (int column = 0; column < Coloum; column++)
         {
             for (int row = 0; row < Row; row++)
@@ -217,6 +222,11 @@ public class GridManager : Singleton<GridManager>
                     next.sprite = Sprites[Random.Range(0, Sprites.Count)];
                 }
             }
+        }
+        if (CheckMatches()) 
+        { 
+            StopCoroutine(FillHoles());
+            StartCoroutine(FillHoles());
         }
     }
 }

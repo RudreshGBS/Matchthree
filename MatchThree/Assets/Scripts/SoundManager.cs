@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using rudscreation.Utils;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,25 +8,43 @@ public enum SoundType
     TypeSelect,
     TypeMove,
     TypePop,
-    TypeGameOver
+    TypeGameOver,
+    MainMenu,
+    GamePlay
 };
 
-public class SoundManager : MonoBehaviour
+public class SoundManager : Singleton<SoundManager>
 {
     public List<AudioClip> clips;
-    public static SoundManager Instance;
+    public AudioClip GamePlayClip;
+    public AudioClip MainMenuClip;
+    //private SoundType type;
     AudioSource Source;
 
-    private void Awake()
+    protected override void Awake()
     {
-        Instance = this;
+        base.Awake();
         Source = GetComponent<AudioSource>();
     }
 
-    public void PlaySound(SoundType clipType)
+    public void PlaySoundOneShot(SoundType clipType)
     {
         var clipID = (int)clipType;
         Source.PlayOneShot(clips[clipID]);
         
+    }
+    public void PlayMusic(SoundType clipType) 
+    {
+        Source.Stop();
+        if (clipType == SoundType.MainMenu)
+        {
+            Source.clip = MainMenuClip;
+        }
+        else if (clipType == SoundType.GamePlay) 
+        { 
+            Source.clip = GamePlayClip;
+        }
+        Source.loop = true;
+        Source.Play();
     }
 }

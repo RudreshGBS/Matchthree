@@ -35,6 +35,7 @@ public class MovingObject : MonoBehaviour
         initPosRocket = Rocket.transform.position;
         initPosStar = Star.transform.position;
         StartSplashSceen();
+        SoundManager.Instance.PlayMusic(SoundType.MainMenu);
     }
 
     private void StartMovement()

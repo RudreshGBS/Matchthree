@@ -95,7 +95,7 @@ public class Tile : MonoBehaviour
         }
         else
         {
-            SoundManager.Instance.PlaySound(SoundType.TypeSelect);
+            SoundManager.Instance.PlaySoundOneShot(SoundType.TypeSelect);
         }
     }
 }

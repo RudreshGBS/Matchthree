@@ -68,6 +68,7 @@ public class GridManager : Singleton<GridManager>
         Grid = new GameObject[Coloum, Row];
         InitGrid();
         setupCall = true;
+        SoundManager.Instance.PlayMusic(SoundType.GamePlay);
     }
     /// <summary>
     /// Init grid
@@ -160,7 +161,7 @@ public class GridManager : Singleton<GridManager>
             temp = renderer1.sprite;
             renderer1.sprite = renderer2.sprite;
             renderer2.sprite = temp;
-            SoundManager.Instance.PlaySound(SoundType.TypeMove);
+            SoundManager.Instance.PlaySoundOneShot(SoundType.TypeMove);
         }
         else
         {
@@ -228,7 +229,7 @@ public class GridManager : Singleton<GridManager>
             {
                 renderer.transform.GetChild(0).gameObject.SetActive(true);
             }
-            SoundManager.Instance.PlaySound(SoundType.TypePop);
+            SoundManager.Instance.PlaySoundOneShot(SoundType.TypePop);
             renderer.sprite = null;
         }
         if (!setupCall)
@@ -243,7 +244,7 @@ public class GridManager : Singleton<GridManager>
     {
         PlayerPrefs.SetInt("score", Score);
         GameOverMenu.SetActive(true);
-        SoundManager.Instance.PlaySound(SoundType.TypeGameOver);
+        SoundManager.Instance.PlaySoundOneShot(SoundType.TypeGameOver);
     }
     private List<SpriteRenderer> FindRowMatchForTile(int column, int row, Sprite sprite)
     {

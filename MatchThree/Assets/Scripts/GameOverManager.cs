@@ -41,6 +41,7 @@ public class GameOverManager : MonoBehaviour
 
     public void RestartLevel()
     {
+        Destroy(GridManager.Instance.gameObject);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 

@@ -24,6 +24,8 @@ public class SoundManager : MonoBehaviour
 
     public void PlaySound(SoundType clipType)
     {
-        Source.PlayOneShot(clips[(int)clipType]);
+        var clipID = (int)clipType;
+        Source.PlayOneShot(clips[clipID]);
+        
     }
 }

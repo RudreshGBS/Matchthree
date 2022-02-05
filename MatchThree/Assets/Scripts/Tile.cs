@@ -23,30 +23,79 @@ public class Tile : MonoBehaviour
     {
         tileRenderer.color = Color.white;
     }
-
-    private void OnMouseDown() 
+    private void OnMouseUp()
     {
-        if (selected != null)
+        //if (selected != null)
+        //{
+        //    if (selected == this)
+        //        return;
+        //    selected.Unselect();
+        //    if (Vector2Int.Distance(selected.Position, Position) == 1)
+        //    {
+        //        GridManager.Instance.SwapTiles(Position, selected.Position);
+        //        selected = null;
+        //    }
+        //    else
+        //    {
+        //        SoundManager.Instance.PlaySound(SoundType.TypeSelect);
+        //        selected = this;
+        //        Select();
+        //    }
+        //}
+        //else
+        //{
+        //    SoundManager.Instance.PlaySound(SoundType.TypeSelect);
+        //    selected = this;
+        //    Select();
+        //}
+    }
+    //private void OnMouseDown() 
+    //{
+    //    Vector2Int NewPos;
+    //    if (swipeInput.swipedRight)
+    //    {
+    //         NewPos = Position + Vector2Int.right;
+
+    //    }
+    //    else if (swipeInput.swipedLeft)
+    //    {
+    //        NewPos = Position + Vector2Int.left;
+
+    //    }
+    //    else if (swipeInput.swipedUp)
+    //    {
+    //        NewPos = Position + Vector2Int.up;
+
+    //    }
+    //    else if (swipeInput.swipedDown)
+    //    {
+    //        NewPos = Position + Vector2Int.down;
+
+    //    }
+    //    else
+    //    {
+    //        NewPos = Position;
+    //    }
+    //    Debug.Log($"NewPos: {NewPos}");
+    //    if (Vector2Int.Distance(NewPos, Position) == 1)
+    //    {
+    //        GridManager.Instance.SwapTiles(Position, NewPos);
+    //    }
+    //    else 
+    //    {
+    //        SoundManager.Instance.PlaySound(SoundType.TypeSelect);
+    //    }
+    //    swipeInput.ResetSwipe();
+
+    //}
+    public void SwipeTile(Vector2Int NewPos) {
+        if (Vector2Int.Distance(NewPos, Position) == 1)
         {
-            if (selected == this)
-                return;
-            selected.Unselect();
-            if (Vector2Int.Distance(selected.Position, Position) == 1)
-            {
-                GridManager.Instance.SwapTiles(Position, selected.Position);
-                selected = null;
-            }
-            else
-            {
-                selected = this;
-                Select();
-            }
+            GridManager.Instance.SwapTiles(Position, NewPos);
         }
         else
         {
-            selected = this;
-            Select();
+            SoundManager.Instance.PlaySound(SoundType.TypeSelect);
         }
     }
-   
 }

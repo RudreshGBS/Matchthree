@@ -1,23 +1,73 @@
 ﻿using rudscreation.Utils;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class GridManager : Singleton<GridManager>
 {
     public List<Sprite> Sprites = new List<Sprite>();
     public GameObject TilePrefab;
+    public GameObject GridPrefab;
+    public Transform GridParent;
     //public int GridDimension = 8;
     public int Row = 8;
     public int Coloum = 8;
     public float Distance = 1.0f;
     private GameObject[,] Grid;
 
+    public GameObject GameOverMenu;
+    public TextMeshProUGUI MovesText;
+    public TextMeshProUGUI ScoreText;
+
+    public int StartingMoves = 50;
+    private int _numMoves;
+    private int BaseMultiplayer =10;
+    private int DynamicMultiplayer =1;
+    bool setupCall = true;
+    public int NumMoves
+    {
+        get
+        {
+            return _numMoves;
+        }
+
+        set
+        {
+            _numMoves = value;
+            MovesText.text = _numMoves.ToString();
+        }
+    }
+
+    private int _score;
+    public int Score
+    {
+        get
+        {
+            return _score;
+        }
+
+        set
+        {
+            _score = value;
+            ScoreText.text = _score.ToString();
+        }
+    }
+
+    protected override void Awake()
+    {
+        base.Awake();
+        Score = 0;
+        NumMoves = StartingMoves;
+        GameOverMenu.SetActive(false);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         Grid = new GameObject[Coloum, Row];
         InitGrid();
+        setupCall = true;
     }
     /// <summary>
     /// Init grid
@@ -25,19 +75,25 @@ public class GridManager : Singleton<GridManager>
 
     void InitGrid()
     {
-        Vector3 positionOffset = transform.position - new Vector3(Coloum * Distance / 2.0f, Row * Distance / 2.0f, 0) + Vector3.right*Distance/2; 
+        Vector3 positionOffset = transform.position - new Vector3(Coloum * Distance / 2.0f, Row * Distance / 2.0f, 0) + Vector3.right*Distance/2;
         for (int row = 0; row < Row; row++)
-            for (int column = 0; column < Coloum; column++) 
+        {
+            for (int column = 0; column < Coloum; column++)
             {
-                GameObject newTile = Instantiate(TilePrefab); 
-                SpriteRenderer renderer = newTile.GetComponent<SpriteRenderer>(); 
+                GameObject newTile = Instantiate(TilePrefab);
+                GameObject gridBG = Instantiate(GridPrefab);
+                SpriteRenderer renderer = newTile.GetComponent<SpriteRenderer>();
                 renderer.sprite = Sprites[Random.Range(0, Sprites.Count)];
                 Tile tile = newTile.AddComponent<Tile>();
                 tile.Position = new Vector2Int(column, row);
-                newTile.transform.parent = transform; 
-                newTile.transform.position = new Vector3(column * Distance, row * Distance, 0) + positionOffset; 
+                gridBG.transform.parent = GridParent;
+                newTile.transform.parent = transform;
+                newTile.transform.position = new Vector3(column * Distance, row * Distance, 0) + positionOffset;
+                gridBG.transform.position = new Vector3(column * Distance, row * Distance, 0) + positionOffset;
                 Grid[column, row] = newTile;
             }
+        }
+        StartCoroutine(FillHoles());
     }
     /// <summary>
     /// this function will swap the the tiles 
@@ -86,7 +142,7 @@ public class GridManager : Singleton<GridManager>
         Sprite temp = renderer1.sprite;
         renderer1.sprite = renderer2.sprite;
         renderer2.sprite = temp;
-
+        DynamicMultiplayer = 1;
         bool changesOccurs = CheckMatches();
         if (!changesOccurs)
         {
@@ -104,20 +160,22 @@ public class GridManager : Singleton<GridManager>
             temp = renderer1.sprite;
             renderer1.sprite = renderer2.sprite;
             renderer2.sprite = temp;
+            SoundManager.Instance.PlaySound(SoundType.TypeMove);
         }
         else
         {
+            NumMoves--;
             var tempPos = tile1.transform.position;
             tile1.position = tile2.position;
             tile2.position = tempPos;
             StartCoroutine(FillHoles());
-
             //do
             //{
             //FillHoles();
             Debug.Log("Fill the holes");
             //} while (CheckMatches());
         }
+        
     }
 
     /// <summary>
@@ -166,12 +224,27 @@ public class GridManager : Singleton<GridManager>
 
         foreach (SpriteRenderer renderer in matchedTiles)
         {
-            renderer.transform.GetChild(0).gameObject.SetActive(true);
+            if (!setupCall)
+            {
+                renderer.transform.GetChild(0).gameObject.SetActive(true);
+            }
+            SoundManager.Instance.PlaySound(SoundType.TypePop);
             renderer.sprite = null;
+        }
+        if (!setupCall)
+        {
+
+            Score += (matchedTiles.Count * (BaseMultiplayer * DynamicMultiplayer));
+            Debug.Log($"Base Mul : {BaseMultiplayer} Dynamic Mul: {DynamicMultiplayer}");
         }
         return matchedTiles.Count > 0;
     }
-
+    void GameOver()
+    {
+        PlayerPrefs.SetInt("score", Score);
+        GameOverMenu.SetActive(true);
+        SoundManager.Instance.PlaySound(SoundType.TypeGameOver);
+    }
     private List<SpriteRenderer> FindRowMatchForTile(int column, int row, Sprite sprite)
     {
         List<SpriteRenderer> result = new List<SpriteRenderer>();
@@ -204,11 +277,23 @@ public class GridManager : Singleton<GridManager>
 
     IEnumerator FillHoles()
     {
-        yield return new WaitForSeconds(0.6f);
+        if (setupCall) 
+        { 
+            yield return new WaitForSeconds(0f);
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+        
         for (int column = 0; column < Coloum; column++)
         {
+            yield return new WaitForSeconds(0.01f);
+
             for (int row = 0; row < Row; row++)
             {
+                yield return new WaitForSeconds(0.01f);
+
                 while (GetSpriteRendererAt(column, row).sprite == null)
                 {
                     SpriteRenderer current = GetSpriteRendererAt(column, row);
@@ -223,10 +308,19 @@ public class GridManager : Singleton<GridManager>
                 }
             }
         }
-        if (CheckMatches()) 
-        { 
+        if (CheckMatches())
+        {
+            DynamicMultiplayer++;
             StopCoroutine(FillHoles());
             StartCoroutine(FillHoles());
+        }
+        else if (setupCall) { 
+        setupCall = false;
+        }
+        else if (NumMoves <= 0)
+        {
+            NumMoves = 0;
+            GameOver();
         }
     }
 }

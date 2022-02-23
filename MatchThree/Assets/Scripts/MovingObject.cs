@@ -54,7 +54,7 @@ public class MovingObject : MonoBehaviour
             "onupdate","SpriteColorUpdate",
             "oncompletetarget",gameObject,
             "oncomplete", "EndSplashSceen",
-            "time", 5
+            "time", 2
             ));
     }
 
@@ -66,13 +66,13 @@ public class MovingObject : MonoBehaviour
             "onupdate", "SpriteColorUpdate",
             "oncompletetarget", gameObject,
             "oncomplete", "StartMenu",
-            "time", 5
+            "time", 2
             ));
     }
     private void StartMenu() 
     {
         StartMovement();
-        menuManger.ShowMainMenu();
+        menuManger.ConnectWallet();
     }
     void SpriteColorUpdate(float value)
     { 

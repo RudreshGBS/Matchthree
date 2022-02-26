@@ -6,21 +6,52 @@ using UnityEngine.SceneManagement;
 public class MainMenuManger : MonoBehaviour
 {
     public GameObject mainMenu; 
-    public GameObject ConnectWalletObject; 
-    public GameObject ConnectButton; 
-    public GameObject Logo; 
+    public GameObject connectWalletObject; 
+    public GameObject connectButton; 
+    public GameObject logo; 
+    public GameObject playButton;
+    public GameObject settingsButton;
+    public GameObject minBalanceError;
+    public GetBalance getBalance;
+    public int minNFT;
+
+    private void OnEnable()
+    {
+        getBalance.onGettingBalance += CheckMinimumBalance;
+    }
     public void OnPlayButtonCLick() 
     {
         SceneManager.LoadScene("Main");
     }
     public void ConnectWallet() {
-        Logo.SetActive(false);
-        ConnectWalletObject.SetActive(true);
+        logo.SetActive(false);
+        connectWalletObject.SetActive(true);
         ShowMainMenu();
-        ConnectButton.SetActive(true);
+        connectButton.SetActive(true);
     }
     public void ShowMainMenu() { 
         mainMenu.SetActive(true);
+        playButton.SetActive(false);
+        settingsButton.SetActive(false);
     }
-
+    public void ShowGameMenu() {
+        playButton.SetActive(true);
+        settingsButton.SetActive(true); 
+    }
+    public void CheckMinimumBalance() 
+    {
+        if (getBalance.bal >= minNFT)
+        {
+            ShowGameMenu();
+        }
+        else 
+        {
+            minBalanceError.SetActive(true);
+        }
+        getBalance.onGettingBalance -= CheckMinimumBalance;
+    }
+    public void QuitGame() 
+    { 
+        Application.Quit();
+    }
 }

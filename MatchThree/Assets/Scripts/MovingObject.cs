@@ -76,7 +76,6 @@ public class MovingObject : MonoBehaviour
     }
     void SpriteColorUpdate(float value)
     { 
-        Debug.Log(value);
         Color color = Color.white;
         color.a = value;
         ElonGoatLogo.color = color;

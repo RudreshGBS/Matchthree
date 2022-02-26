@@ -8,21 +8,22 @@ using System.Linq;
 
 public class FirebaseManager : MonoBehaviour
 {
+   public UserList LeaderboardList = new UserList();
     UserList userlist = new UserList();
-    UserList LeaderboardList = new UserList();
     DatabaseReference databaseReference;
     void Start()
     {
         databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
+        PopulateLeaderBoard(0);
+
         //for (int i = 1; i <= 10; i++)
         //{
         //    saveData(i + "00000000000000000xsdadhasdhads00000" + i, i * Random.Range(1000, 10000));
         //}
-        //PopulateLeaderBoard(5);
         //StartCoroutine(ShowLeaderboard());
     }
 
-   public void saveData(string id, int score)
+    public void saveData(string id, int score)
     {
         User user1 = new User();
         user1.id = id;
@@ -38,9 +39,10 @@ public class FirebaseManager : MonoBehaviour
     }
 
 
-    void PopulateLeaderBoard(int LoadLimit)
+    void PopulateLeaderBoard(int LoadLimit = 0)
     {
-        var top5 = FirebaseDatabase.DefaultInstance.GetReference("Users").OrderByChild("score").LimitToFirst(LoadLimit);
+
+        var top5 = (LoadLimit == 0)? FirebaseDatabase.DefaultInstance.GetReference("Users").OrderByChild("score") : FirebaseDatabase.DefaultInstance.GetReference("Users").OrderByChild("score").LimitToFirst(LoadLimit);
         // Keep this query synced.
         top5.KeepSynced(true);
 

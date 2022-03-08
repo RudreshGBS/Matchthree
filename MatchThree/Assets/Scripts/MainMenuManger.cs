@@ -25,9 +25,16 @@ public class MainMenuManger : MonoBehaviour
     }
     public void ConnectWallet() {
         logo.SetActive(false);
+#if !UNITY_EDITOR
         connectWalletObject.SetActive(true);
         ShowMainMenu();
         connectButton.SetActive(true);
+#endif
+#if UNITY_EDITOR
+        ShowMainMenu();
+        ShowGameMenu();
+#endif
+
     }
     public void ShowMainMenu() { 
         mainMenu.SetActive(true);

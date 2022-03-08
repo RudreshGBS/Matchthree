@@ -49,13 +49,17 @@ public class GetBalance : WalletConnectActions
         resultText.gameObject.SetActive(true);
         Debug.Log(balance);
         var id = WalletConnect.ActiveSession.Accounts[0].ToString();
-            if (firebaseManager.LeaderboardList.Users.Count > 0) 
+            if (firebaseManager.LeaderboardList.Users.Count > 0)
             {
                 User currentUser = firebaseManager.LeaderboardList.Users.FirstOrDefault(user => user.id.Contains(id));
-                if (currentUser == null) 
+                if (currentUser == null)
                 {
                     firebaseManager.saveData(WalletConnect.ActiveSession.Accounts[0], 0);
                 }
+            }
+            else 
+            {
+                firebaseManager.saveData(WalletConnect.ActiveSession.Accounts[0], 0);
             }
             onGettingBalance?.Invoke();
         }));

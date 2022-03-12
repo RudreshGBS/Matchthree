@@ -1,23 +1,39 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LevelSelectionManager : MonoBehaviour
 {
-    int currentLevel, nextLevel;
+    public int CurrentLevel;
+    public float TotalLevels;
     [SerializeField]
     private Scrollbar scrollBar;
+    [SerializeField]
+    private LevelData[] levels;
     // Start is called before the first frame update
     void Start()
     {
-        currentLevel = GameDataStore.CurrentLevel;
-        nextLevel = currentLevel++;
-        ActivateLevels();
+        //currentLevel = GameDataStore.CurrentLevel;
+
         if (scrollBar != null)
         {
-            scrollBar.value = 0;
+            double slidingValue;
+            if(CurrentLevel == 1)
+            {
+                slidingValue = 0;
+            }
+            else if(CurrentLevel == TotalLevels)
+            {
+                slidingValue = 1;
+            }
+            else
+            {
+                slidingValue = CurrentLevel / TotalLevels;
+            }
+            scrollBar.value = (float)slidingValue - 0.15f;
         }
+
+        ActivateLevels();
+        
     }
     private void Update()
     {
@@ -31,9 +47,10 @@ public class LevelSelectionManager : MonoBehaviour
     }
     public void ActivateLevels()
     {
-        for (int i = 1; i <= GameDataStore.CurrentLevel; i++)
+        for (int i = 0; i < CurrentLevel; i++)
         {
-
+            levels[i].isActiveLevel = true;
+            levels[i].SetupLevel();
         }
     }
 }

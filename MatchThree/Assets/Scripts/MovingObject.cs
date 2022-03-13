@@ -9,6 +9,8 @@ public class MovingObject : MonoBehaviour
     [SerializeField]
     private GameObject Planet2;
     [SerializeField]
+    private GameObject Planet3;
+    [SerializeField]
     private GameObject Rocket;
     [SerializeField]
     private GameObject Star;
@@ -41,7 +43,8 @@ public class MovingObject : MonoBehaviour
     private void StartMovement()
     {
         MovePlanet1();
-        MovePlanet2();
+        MovePlanet2(); 
+        MovePlanet3();
         Invoke("MoveRocket", 1f);
         Invoke("MoveStar", 3f);
         MovePlayButton();
@@ -110,6 +113,16 @@ public class MovingObject : MonoBehaviour
     void MovePlanet2() 
     {
         iTween.RotateBy(Planet2, iTween.Hash(
+        "z", 1f,
+        "islocal", true,
+        "looptype", iTween.LoopType.loop,
+        "easetype", iTween.EaseType.linear,
+        "time", 50f
+        ));
+    }
+    void MovePlanet3()
+    {
+        iTween.RotateBy(Planet3, iTween.Hash(
         "z", 1f,
         "islocal", true,
         "looptype", iTween.LoopType.loop,

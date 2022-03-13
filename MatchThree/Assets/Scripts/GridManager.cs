@@ -1,30 +1,42 @@
 ﻿using rudscreation.Utils;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
 public class GridManager : Singleton<GridManager>
 {
-    public List<Sprite> Sprites = new List<Sprite>();
+    public List<LevelModel> levels = new List<LevelModel>(); 
     public GameObject TilePrefab;
     public GameObject GridPrefab;
     public Transform GridParent;
+    public SpriteRenderer BG;
     //public int GridDimension = 8;
-    public int Row = 8;
-    public int Coloum = 8;
+   
     public float Distance = 1.0f;
     private GameObject[,] Grid;
 
     public GameObject GameOverMenu;
     public TextMeshProUGUI MovesText;
     public TextMeshProUGUI ScoreText;
+    public TextMeshProUGUI TargetScoreText;
+    public TextMeshProUGUI TimerText;
 
-    public int StartingMoves = 50;
     private int _numMoves;
     private int BaseMultiplayer =10;
     private int DynamicMultiplayer =1;
+
+    private List<Sprite> Sprites = new List<Sprite>();
+    private Sprite blockFrame;
+    private int Row = 8;
+    private int Coloum = 8;
+    private int StartingMoves = 50;
+    private int TargetScore;
+
     bool setupCall = true;
+    public Action setupCompleted; 
     public int NumMoves
     {
         get
@@ -65,11 +77,32 @@ public class GridManager : Singleton<GridManager>
     // Start is called before the first frame update
     void Start()
     {
+
+        LevelModel level = levels.FirstOrDefault(x=> x.levelNo.Equals("1"));
+        if (level != null) 
+        {
+            Sprites.Clear();
+            Sprites = level.symbols.ToList();
+            blockFrame = level.blockFrame;
+            Row = level.rows;
+            Coloum = level.cols;
+            StartingMoves = level.maxMoves;
+            BG.sprite = level.background;
+            TargetScore = level.tagetScore;
+        }
+        StartLevel();
+
+    }
+
+    private void StartLevel()
+    {
+        GridPrefab.GetComponent<SpriteRenderer>().sprite = blockFrame;
         Grid = new GameObject[Coloum, Row];
         InitGrid();
         setupCall = true;
         SoundManager.Instance.PlayMusic(SoundType.GamePlay);
     }
+
     /// <summary>
     /// Init grid
     /// </summary>
@@ -84,7 +117,7 @@ public class GridManager : Singleton<GridManager>
                 GameObject newTile = Instantiate(TilePrefab);
                 GameObject gridBG = Instantiate(GridPrefab);
                 SpriteRenderer renderer = newTile.GetComponent<SpriteRenderer>();
-                renderer.sprite = Sprites[Random.Range(0, Sprites.Count)];
+                renderer.sprite = Sprites[UnityEngine.Random.Range(0, Sprites.Count)];
                 Tile tile = newTile.AddComponent<Tile>();
                 tile.Position = new Vector2Int(column, row);
                 gridBG.transform.parent = GridParent;
@@ -305,7 +338,7 @@ public class GridManager : Singleton<GridManager>
                         current.sprite = next.sprite;
                         current = next;
                     }
-                    next.sprite = Sprites[Random.Range(0, Sprites.Count)];
+                    next.sprite = Sprites[UnityEngine.Random.Range(0, Sprites.Count)];
                 }
             }
         }
@@ -315,12 +348,15 @@ public class GridManager : Singleton<GridManager>
             StopCoroutine(FillHoles());
             StartCoroutine(FillHoles());
         }
-        else if (setupCall) { 
-        setupCall = false;
+        else if (setupCall) {
+            setupCall = false;
         }
         else if (NumMoves <= 0)
         {
             NumMoves = 0;
+            GameOver();
+        } else if (Score >= TargetScore) 
+        {
             GameOver();
         }
     }

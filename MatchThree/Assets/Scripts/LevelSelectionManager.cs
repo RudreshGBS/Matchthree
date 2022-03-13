@@ -9,6 +9,15 @@ public class LevelSelectionManager : MonoBehaviour
     private Scrollbar scrollBar;
     [SerializeField]
     private LevelData[] levels;
+    public LevelData CurrentLevelData 
+    { 
+        get
+        {
+            return levels[CurrentLevel - 1];
+        }
+     }
+    [SerializeField]
+    private RocketController rocketController;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,11 +38,11 @@ public class LevelSelectionManager : MonoBehaviour
             {
                 slidingValue = CurrentLevel / TotalLevels;
             }
-            scrollBar.value = (float)slidingValue - 0.15f;
+            scrollBar.value = (float)slidingValue < 0.75 ? (float)slidingValue - 0.1f : (float)slidingValue;
         }
 
         ActivateLevels();
-        
+        StartCoroutine(rocketController.LaunchRocket());
     }
     private void Update()
     {

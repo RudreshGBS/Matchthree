@@ -10,7 +10,7 @@ public class LevelData : MonoBehaviour
     public bool isActiveLevel = false;
     public Color Enabled;
     public Color Disabled;
-    public Transform RocketEndPosition;
+    public RectTransform[] RocketWaypoints;
     private Image planet;
     [SerializeField]
     private Button planetButton;

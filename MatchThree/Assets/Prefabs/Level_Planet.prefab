@@ -207,7 +207,7 @@ MonoBehaviour:
   - {fileID: 6817007897602093745}
   - {fileID: 7046904636649989554}
   - {fileID: 1255143800492291168}
-  planetButton: {fileID: 2121665372381879778}
+  levelButton: {fileID: 2121665372381879778}
   planetButtonText: {fileID: 2121665372148738619}
 --- !u!1 &2121665372148738617
 GameObject:
@@ -463,7 +463,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2121665372381879781}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2121665371768667375}
+        m_TargetAssemblyTypeName: LevelData, Assembly-CSharp
+        m_MethodName: LoadLevelOnButtonClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &6168255793944552322
 GameObject:
   m_ObjectHideFlags: 0

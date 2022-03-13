@@ -6,42 +6,74 @@ using UnityEngine.UI;
 
 public class LevelData : MonoBehaviour
 {
+    /// <summary>
+    /// Level Number 
+    /// </summary>
     public int Level = 0;
+
+
+    /// <summary>
+    /// Is this Level Active or not
+    /// </summary>
     public bool isActiveLevel = false;
+
+
+    /// <summary>
+    /// If Level is active or not, What should be it's color
+    /// </summary>
     public Color Enabled;
     public Color Disabled;
+
+
+    /// <summary>
+    /// Reference of the Rocekt's Waypoints from current Planet to Next Planet
+    /// </summary>
     public RectTransform[] RocketWaypoints;
-    private Image planet;
-    [SerializeField]
-    private Button planetButton;
+
+
+    //Reference of the Clickable Level Button
+    public Button levelButton;
+
     [SerializeField]
     private TMP_Text planetButtonText;
+    private Image planet;
+
     private void Start()
     {
         planet = GetComponent<Image>();
         planetButtonText.text = Level.ToString();
         SetupLevel();
     }
+
+
+    /// <summary>
+    /// Enable Disable the planet features according to the planet's activeness
+    /// </summary>
     public void SetupLevel()
     {
         if(!isActiveLevel)
         {
             planet.color = Disabled;
-            planetButton.image.color = Disabled;
-            planetButton.interactable = false;
+            levelButton.image.color = Disabled;
+            levelButton.interactable = false;
             planetButtonText.color = Disabled;
         }
         else
         {
             planet.color = Enabled;
-            planetButton.image.color = Enabled;
-            planetButton.interactable = true;
+            levelButton.image.color = Enabled;
+            levelButton.interactable = true;
             planetButtonText.color = Enabled;
         }
     }
 
-    public void LoadLevel()
+
+    /// <summary>
+    /// Use this Method to change to any OLD LEVEL Scene and use the integer Level to send it across
+    /// </summary>
+    public void LoadLevelOnButtonClick()
     {
-        //Load the Main Scene from Here
+        // HINT use Level
+        Debug.Log($"User Clicked an Active Level: { this.Level} Now load the Main Scene with this level");
     }
 }

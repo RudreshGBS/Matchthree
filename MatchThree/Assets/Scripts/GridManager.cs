@@ -32,8 +32,10 @@ public class GridManager : Singleton<GridManager>
     private Sprite blockFrame;
     private int Row = 8;
     private int Coloum = 8;
-    private int StartingMoves = 50;
+    private int StartingMoves;
     private int TargetScore;
+    private TimeSpan Time;
+    private TimerHandler timerHandler;
 
     bool setupCall = true;
     public Action setupCompleted; 
@@ -69,15 +71,14 @@ public class GridManager : Singleton<GridManager>
     protected override void Awake()
     {
         base.Awake();
-        Score = 0;
-        NumMoves = StartingMoves;
         GameOverMenu.SetActive(false);
+        timerHandler = TimerHandler.Instance;
+
     }
 
     // Start is called before the first frame update
     void Start()
     {
-
         LevelModel level = levels.FirstOrDefault(x=> x.levelNo.Equals("1"));
         if (level != null) 
         {
@@ -89,17 +90,30 @@ public class GridManager : Singleton<GridManager>
             StartingMoves = level.maxMoves;
             BG.sprite = level.background;
             TargetScore = level.tagetScore;
+            Time = new TimeSpan(0, 0, level.time);
         }
         StartLevel();
+
+    }
+    private void Update()
+    {
+        if (timerHandler.totaltimeinTimespan != null) 
+        { 
+            TimerText.text = timerHandler.totaltimeinTimespan.ToString(@"hh\:mm\:ss");
+        }
 
     }
 
     private void StartLevel()
     {
         GridPrefab.GetComponent<SpriteRenderer>().sprite = blockFrame;
+        NumMoves = StartingMoves;
+        Score = 0;
         Grid = new GameObject[Coloum, Row];
         InitGrid();
         setupCall = true;
+        TargetScoreText.text= TargetScore.ToString();
+        TimerText.text= Time.TotalSeconds.ToString(@"hh\:mm\:ss");
         SoundManager.Instance.PlayMusic(SoundType.GamePlay);
     }
 
@@ -278,6 +292,9 @@ public class GridManager : Singleton<GridManager>
         PlayerPrefs.SetInt("score", Score);
         GameOverMenu.SetActive(true);
         SoundManager.Instance.PlaySoundOneShot(SoundType.TypeGameOver);
+        timerHandler.UpdateZone -= TimerHandler_UpdateZone;
+        timerHandler.StopTimer();
+
     }
     private List<SpriteRenderer> FindRowMatchForTile(int column, int row, Sprite sprite)
     {
@@ -350,6 +367,9 @@ public class GridManager : Singleton<GridManager>
         }
         else if (setupCall) {
             setupCall = false;
+            timerHandler.StartTimer(Time);
+            timerHandler.UpdateZone += TimerHandler_UpdateZone;
+            timerHandler.TimerReachedToEnd += TimerHandler_TimerReachedEnd;
         }
         else if (NumMoves <= 0)
         {
@@ -358,6 +378,33 @@ public class GridManager : Singleton<GridManager>
         } else if (Score >= TargetScore) 
         {
             GameOver();
+        }
+    }
+
+    private void TimerHandler_TimerReachedEnd()
+    {
+        timerHandler.TimerReachedToEnd -= TimerHandler_TimerReachedEnd;
+        GameOver();
+    }
+
+    private void TimerHandler_UpdateZone(TimerColorZone zone)
+    {
+        switch (zone)
+        {
+            case TimerColorZone.Green:
+                TimerText.color = Color.white;
+                break;
+            case TimerColorZone.Yellow:
+                TimerText.color = Color.yellow;
+                break;
+            case TimerColorZone.Red:
+                TimerText.color = Color.red;
+                break;
+            case TimerColorZone.Grey:
+                TimerText.color = Color.grey;
+                break;
+            default:
+                break;
         }
     }
 }

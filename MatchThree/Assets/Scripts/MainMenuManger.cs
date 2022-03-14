@@ -21,14 +21,24 @@ public class MainMenuManger : MonoBehaviour
     }
     public void OnPlayButtonCLick() 
     {
-        SceneManager.LoadScene("Main");
+        SceneManager.LoadScene("LevelSelection");
     }
     public void ConnectWallet() {
         logo.SetActive(false);
 #if !UNITY_EDITOR
+        if (GameDataStore.isFirsttime)
+        {
+
         connectWalletObject.SetActive(true);
         ShowMainMenu();
         connectButton.SetActive(true);
+
+        }
+        else 
+        { 
+            ShowMainMenu();
+            ShowGameMenu();
+        }
 #endif
 #if UNITY_EDITOR
         ShowMainMenu();

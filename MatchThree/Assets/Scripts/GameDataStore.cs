@@ -9,10 +9,27 @@ using UnityEngine;
 /// </summary>
 public static class GameDataStore 
 {
+    private static int val;
+
     public static int CurrentLevel { get; set; }
+
+    public static int LastUnloackedLevel 
+    {
+        get 
+        {
+            return val;
+        }
+        set {
+             val = value;
+            PlayerPrefs.SetInt("LastUnloackedLevel", value);
+        } 
+    }
     public static int Score { get; set; }
     public static void LoadData()
     {
         //Load from Realtime Database
     }
+
+    public static bool isFirsttime= true;
+    public static bool CanMoveRocket= true;
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LevelData : MonoBehaviour
@@ -73,7 +74,12 @@ public class LevelData : MonoBehaviour
     /// </summary>
     public void LoadLevelOnButtonClick()
     {
+        GameDataStore.CurrentLevel = Level;
         // HINT use Level
         Debug.Log($"User Clicked an Active Level: { this.Level} Now load the Main Scene with this level");
+        SceneManager.LoadScene("Main");
+        GameDataStore.isFirsttime = false;
+
+
     }
 }

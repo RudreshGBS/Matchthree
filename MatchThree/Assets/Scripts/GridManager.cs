@@ -18,7 +18,7 @@ public class GridManager : Singleton<GridManager>
     public float Distance = 1.0f;
     private GameObject[,] Grid;
 
-    public GameObject GameOverMenu;
+    public GameOverManager GameOverMenu;
     public TextMeshProUGUI MovesText;
     public TextMeshProUGUI ScoreText;
     public TextMeshProUGUI TargetScoreText;
@@ -38,7 +38,7 @@ public class GridManager : Singleton<GridManager>
     private TimerHandler timerHandler;
 
     bool setupCall = true;
-    public Action setupCompleted; 
+    public Action<int> OnLevelResult; 
     public int NumMoves
     {
         get
@@ -71,7 +71,7 @@ public class GridManager : Singleton<GridManager>
     protected override void Awake()
     {
         base.Awake();
-        GameOverMenu.SetActive(false);
+        GameOverMenu.gameObject.SetActive(false);
         timerHandler = TimerHandler.Instance;
 
     }
@@ -79,7 +79,7 @@ public class GridManager : Singleton<GridManager>
     // Start is called before the first frame update
     void Start()
     {
-        LevelModel level = levels.FirstOrDefault(x=> x.levelNo.Equals("1"));
+        LevelModel level = levels.FirstOrDefault(x=> x.levelNo.Equals($"{GameDataStore.CurrentLevel}"));
         if (level != null) 
         {
             Sprites.Clear();
@@ -100,6 +100,11 @@ public class GridManager : Singleton<GridManager>
         if (timerHandler.totaltimeinTimespan != null) 
         { 
             TimerText.text = timerHandler.totaltimeinTimespan.ToString(@"hh\:mm\:ss");
+        }
+
+        if (Input.GetKeyDown(KeyCode.P)) 
+        {
+            GameOver(true);
         }
 
     }
@@ -287,13 +292,27 @@ public class GridManager : Singleton<GridManager>
         }
         return matchedTiles.Count > 0;
     }
-    void GameOver()
+    void GameOver(bool isPassed)
     {
-        PlayerPrefs.SetInt("score", Score);
-        GameOverMenu.SetActive(true);
-        SoundManager.Instance.PlaySoundOneShot(SoundType.TypeGameOver);
+       // PlayerPrefs.SetInt("score", Score);
+        GameOverMenu.gameObject.SetActive(true);
+        GameOverMenu.OnResult(isPassed,Score);
+        if (isPassed) 
+        {
+            if (GameDataStore.CurrentLevel == GameDataStore.LastUnloackedLevel)
+            {
+                GameDataStore.LastUnloackedLevel++;
+                GameDataStore.CanMoveRocket = true;
+            }
+            else 
+            {
+                GameDataStore.CanMoveRocket = false;
+
+            }
+        }
         timerHandler.UpdateZone -= TimerHandler_UpdateZone;
         timerHandler.StopTimer();
+        SoundManager.Instance.PlaySoundOneShot(SoundType.TypeGameOver);
 
     }
     private List<SpriteRenderer> FindRowMatchForTile(int column, int row, Sprite sprite)
@@ -374,17 +393,19 @@ public class GridManager : Singleton<GridManager>
         else if (NumMoves <= 0)
         {
             NumMoves = 0;
-            GameOver();
+            
+            GameOver(Score >= TargetScore);
+
         } else if (Score >= TargetScore) 
         {
-            GameOver();
+            GameOver(true);
         }
     }
 
     private void TimerHandler_TimerReachedEnd()
     {
         timerHandler.TimerReachedToEnd -= TimerHandler_TimerReachedEnd;
-        GameOver();
+        GameOver(Score >= TargetScore);
     }
 
     private void TimerHandler_UpdateZone(TimerColorZone zone)

@@ -36,7 +36,14 @@ public class MovingObject : MonoBehaviour
         initPosPlanet2 = Planet2.transform.position;
         initPosRocket = Rocket.transform.position;
         initPosStar = Star.transform.position;
-        StartSplashSceen();
+        if (GameDataStore.isFirsttime)
+        {
+            StartSplashSceen();
+        }
+        else 
+        {
+            StartMenu();
+        }    
         SoundManager.Instance.PlayMusic(SoundType.MainMenu);
     }
 

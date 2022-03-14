@@ -39,6 +39,8 @@ public class RocketController : MonoBehaviour
     /// </summary>
     public bool isRocketLaunched = false;
 
+    public TrailRenderer trailRenderer;
+    private Vector3 prev;
 
     void Start()
     {
@@ -56,7 +58,47 @@ public class RocketController : MonoBehaviour
     /// </summary>
     public void LaunchRocket()
     {
-        isRocketLaunched = true;
+        
+        //levelSelectionManager.scroll.vertical = false;
+        if (rocketWaypoints != null)
+        {
+            levelSelectionManager.Path.SetActive(false);
+            levelSelectionManager.SetActiveLevelsButtonOnRocketLaunch(false);
+            //isRocketLaunched = true;
+            iTween.MoveTo(this.gameObject, iTween.Hash(
+                       "path", rocketWaypoints,
+                       "looktime", 0.1f, 
+                       "lookahead",0.1f,
+                       "time", 3f,
+                       "easetype",iTween.EaseType.linear,
+                       "oncompletetarget",this.gameObject,
+                       "oncomplete","OnLaunchComplete"
+                       ));
+            StartCoroutine(RotateObject());
+        }
+
+    }
+
+    IEnumerator RotateObject()
+    {
+        yield return new WaitForSeconds(0.1f);
+        trailRenderer.enabled = true;
+        while (true)
+        {
+            yield return new WaitForSeconds(0.001f);
+            transform.up = transform.position - prev;
+            prev = transform.position;
+        }
+    }
+
+    private void OnLaunchComplete() 
+    {
+        //levelSelectionManager.scroll.vertical = true;
+
+        trailRenderer.enabled = false;
+        levelSelectionManager.SetActiveLevelsButtonOnRocketLaunch(true);
+        levelSelectionManager.Path.SetActive(true);
+        levelSelectionManager.ActivateLevels(GameDataStore.LastUnloackedLevel);
     }
 
     /// <summary>
@@ -70,26 +112,27 @@ public class RocketController : MonoBehaviour
     /// </summary>
     private void FixedUpdate()
     {
-        if (isRocketLaunched)
-        {
-            if (value <= 1 && rocketWaypoints != null)
-            {
-                levelSelectionManager.Path.SetActive(false);
-                levelSelectionManager.SetActiveLevelsButtonOnRocketLaunch(false);
+        //if (isRocketLaunched)
+        //{
+            //if (value <= 1 && rocketWaypoints != null)
+            //{
+                //levelSelectionManager.Path.SetActive(false);
+                //levelSelectionManager.SetActiveLevelsButtonOnRocketLaunch(false);
                 
                 //Rocket Animation
                 //Speed Increase Decrease
-                value += Time.deltaTime / 4;
-                iTween.PutOnPath(this.gameObject, rocketWaypoints, value);
+                //value += Time.deltaTime / 4;
+                //iTween.PutOnPath(this.gameObject, rocketWaypoints, value);
+               
 
-                if (Vector3.Distance(this.transform.position, rocketWaypoints[rocketWaypoints.Length - 1].position) <= 0.1f)
-                {
-                    isRocketLaunched = false;
-                    levelSelectionManager.SetActiveLevelsButtonOnRocketLaunch(true);
-                    levelSelectionManager.Path.SetActive(true);
-                    levelSelectionManager.LoadNextLevelNow?.Invoke();
-                }
-            }
-        }
+                //if (Vector3.Distance(this.transform.position, rocketWaypoints[rocketWaypoints.Length - 1].position) <= 0.1f)
+                //{
+                //    isRocketLaunched = false;
+                //    levelSelectionManager.SetActiveLevelsButtonOnRocketLaunch(true);
+                //    levelSelectionManager.Path.SetActive(true);
+                //    levelSelectionManager.LoadNextLevelNow?.Invoke();
+                //}
+            //}
+        //}
     }
 }

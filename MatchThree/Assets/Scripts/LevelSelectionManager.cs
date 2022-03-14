@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +9,7 @@ public class LevelSelectionManager : MonoBehaviour
     /// TODO: currentLevel = GameDataStore.CurrentLevel; should be used
     /// this is the Current Level of the player at the moment
     /// </summary>
-    public int CurrentLevel;
+    private int LastUnloackedLevel;
     
     
     /// <summary>
@@ -29,6 +30,8 @@ public class LevelSelectionManager : MonoBehaviour
     [SerializeField]
     private Scrollbar scrollBar;
 
+    [SerializeField]
+    public ScrollRect scroll;
 
     /// <summary>
     /// Reference of Rocket Controller
@@ -51,59 +54,92 @@ public class LevelSelectionManager : MonoBehaviour
     { 
         get
         {
-            return levels[CurrentLevel - 1];
+            return levels[LastUnloackedLevel];
         }
      }
 
+    bool startFirsRocketLaunch;
 
-    /// <summary>
-    /// Event for Loading Next Level
-    /// </summary>
-    public Action LoadNextLevelNow;
-
+    private void Awake()
+    {
+        if (PlayerPrefs.HasKey("LastUnloackedLevel"))
+        {
+            if (GameDataStore.isFirsttime||!GameDataStore.CanMoveRocket)
+            {
+                LastUnloackedLevel = PlayerPrefs.GetInt("LastUnloackedLevel");
+            }
+            else
+            {
+                 LastUnloackedLevel = GameDataStore.CurrentLevel;
+                 GameDataStore.CanMoveRocket = false;
+            }
+            if (GameDataStore.LastUnloackedLevel == 0) 
+            { 
+                GameDataStore.LastUnloackedLevel = LastUnloackedLevel;
+            }
+            startFirsRocketLaunch = false;
+        }
+        else
+        {
+            GameDataStore.LastUnloackedLevel = 1;
+            startFirsRocketLaunch = true;
+        }
+    }
 
     void Start()
     {
+
+       
         if (scrollBar != null)
         {
             double slidingValue;
-            if(CurrentLevel == 1)
+            if(LastUnloackedLevel == 1)
             {
                 slidingValue = 0;
             }
-            else if(CurrentLevel == TotalLevels)
+            else if(LastUnloackedLevel == TotalLevels)
             {
                 slidingValue = 1;
             }
             else
             {
-                slidingValue = CurrentLevel / TotalLevels;
+                slidingValue = LastUnloackedLevel / TotalLevels;
             }
             scrollBar.value = (float)slidingValue < 0.75 ? (float)slidingValue - 0.1f : (float)slidingValue;
         }
-
         ActivateLevels();
+        if (startFirsRocketLaunch) 
+        {
+            LastUnloackedLevel = GameDataStore.LastUnloackedLevel;
+            rocketController.LaunchRocket();
+            startFirsRocketLaunch= false;
+        }
+
+        if (LastUnloackedLevel != GameDataStore.LastUnloackedLevel && !startFirsRocketLaunch)
+        {
+            LastUnloackedLevel = GameDataStore.LastUnloackedLevel;
+            rocketController.LaunchRocket();
+        }
+
         
-        //TODO: Launch Rocket Only after a level pass Event has been received
-        rocketController.LaunchRocket();
     }
 
     /// <summary>
     /// Use this method when Switching to the next level Scene
     /// </summary>
-    void LoadNextLevel()
-    {
-        Debug.Log("LoadNextLevelNow");
-        if (CurrentLevel < TotalLevels)
-        {
-            CurrentLevel += 1;
-        }
-        ActivateLevels(CurrentLevel);
-        // After Some Time Load the Scene here after
+    //public void LoadNextLevel()
+    //{
+    //    Debug.Log("LoadNextLevelNow");
+    //    if (LastUnloackedLevel < TotalLevels)
+    //    {
+    //        LastUnloackedLevel += 1;
+    //    }
+    //    ActivateLevels(LastUnloackedLevel);
+    //    // After Some Time Load the Scene here after
 
 
 
-    }
+    //}
 
     /// <summary>
     /// withtout param will Setup all the levels according to the current active level
@@ -114,7 +150,7 @@ public class LevelSelectionManager : MonoBehaviour
     {
         if (level == -1)
         {
-            for (int i = 0; i < CurrentLevel; i++)
+            for (int i = 0; i <= LastUnloackedLevel; i++)
             {
                 levels[i].isActiveLevel = true;
                 levels[i].SetupLevel();
@@ -122,8 +158,8 @@ public class LevelSelectionManager : MonoBehaviour
         }
         else
         {
-            levels[level-1].isActiveLevel = true;
-            levels[level-1].SetupLevel();
+            levels[level].isActiveLevel = true;
+            levels[level].SetupLevel();
         }
     }
     /// <summary>
@@ -132,7 +168,7 @@ public class LevelSelectionManager : MonoBehaviour
     /// <param name="enabled"></param>
     public void SetActiveLevelsButtonOnRocketLaunch(bool enabled)
     {
-        for (int i = 0; i < CurrentLevel; i++)
+        for (int i = 0; i < LastUnloackedLevel; i++)
         {
             levels[i].levelButton.interactable = enabled;
         }
@@ -140,10 +176,26 @@ public class LevelSelectionManager : MonoBehaviour
 
     private void OnEnable()
     {
-        LoadNextLevelNow += LoadNextLevel;
+        //GridManager.Instance.OnLevelResult += LevelPassed;
+
     }
     private void OnDisable()
     {
-        LoadNextLevelNow -= LoadNextLevel;
+        //GridManager.Instance.OnLevelResult -= LevelPassed;
+
     }
+    private void LevelPassed(int levelNo)
+    {
+       
+    }
+#if UNITY_EDITOR
+    [MenuItem("Match three/Reset PlayerPrefs ")]
+    static void ResetPP()
+    {
+        PlayerPrefs.DeleteAll();
+        //PlayerPrefs.SetInt("LastUnloackedLevel", 0);
+    }
+#endif
+
 }
+

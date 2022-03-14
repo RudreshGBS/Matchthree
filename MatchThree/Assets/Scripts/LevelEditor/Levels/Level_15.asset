@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ac512c5977203643bd9cabf83e94bf8, type: 3}
+  m_Name: Level_15
+  m_EditorClassIdentifier: 
+  levelNo: 15
+  symbols:
+  - {fileID: 21300000, guid: 2fe6786c021987d48a5dc5b6f9200dfa, type: 3}
+  - {fileID: 21300000, guid: 636beb517016a2743bbba0eb59bb4799, type: 3}
+  - {fileID: 21300000, guid: 4e745ef3f0c13c64f95f825c0db5cb68, type: 3}
+  - {fileID: 21300000, guid: 1d602dda8985cb540be0eb01c15a84a3, type: 3}
+  - {fileID: 21300000, guid: c513d9b2ec1626540b6ab4b3ba13d636, type: 3}
+  - {fileID: 21300000, guid: b701c31f4c7031b409d667d186c2afc7, type: 3}
+  - {fileID: 21300000, guid: 07ca4b35ae4b3c643bd647abe2465f16, type: 3}
+  - {fileID: 21300000, guid: b5396a99b5af7214299a8cf5c571cb43, type: 3}
+  - {fileID: 21300000, guid: 4d2b76174406dd148a8bb7745c11d658, type: 3}
+  background: {fileID: 21300000, guid: 1eebf783d344ad8478fedc59afa8a1ae, type: 3}
+  blockFrame: {fileID: 21300000, guid: e7a43e76efc430d4daee1930be40359b, type: 3}
+  rows: 8
+  cols: 5
+  maxMoves: 15
+  time: 60
+  tagetScore: 3500

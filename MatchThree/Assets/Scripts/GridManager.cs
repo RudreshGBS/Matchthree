@@ -67,20 +67,19 @@ public class GridManager : Singleton<GridManager>
             ScoreText.text = _score.ToString();
         }
     }
-
+    private Dictionary<Sprite, int> spriteToIDDictionary = new Dictionary<Sprite, int>();
     protected override void Awake()
     {
         base.Awake();
         GameOverMenu.gameObject.SetActive(false);
         timerHandler = TimerHandler.Instance;
-
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        LevelModel level = levels.FirstOrDefault(x=> x.levelNo.Equals($"{GameDataStore.CurrentLevel}"));
-        if (level != null) 
+        LevelModel level = levels.FirstOrDefault(x => x.levelNo.Equals($"{GameDataStore.CurrentLevel}"));
+        if (level != null)
         {
             Sprites.Clear();
             Sprites = level.symbols.ToList();
@@ -91,18 +90,36 @@ public class GridManager : Singleton<GridManager>
             BG.sprite = level.background;
             TargetScore = level.tagetScore;
             Time = new TimeSpan(0, 0, level.time);
+            if (spriteToIDDictionary != null)
+            {
+                spriteToIDDictionary.Clear();
+            }
+            for (int i = 0; i < level.symbols.Count; i++)
+            {
+                if (!spriteToIDDictionary.ContainsKey(level.symbols[i]))
+                {
+                    try
+                    {
+                        spriteToIDDictionary.Add(level.symbols[i], i);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError(e.Message);
+                    }
+                }
+            }
         }
         StartLevel();
 
     }
     private void Update()
     {
-        if (timerHandler.totaltimeinTimespan != null) 
-        { 
+        if (timerHandler.totaltimeinTimespan != null)
+        {
             TimerText.text = timerHandler.totaltimeinTimespan.ToString(@"hh\:mm\:ss");
         }
 
-        if (Input.GetKeyDown(KeyCode.P)) 
+        if (Input.GetKeyDown(KeyCode.P))
         {
             GameOver(true);
         }
@@ -128,17 +145,17 @@ public class GridManager : Singleton<GridManager>
 
     void InitGrid()
     {
-        Vector3 positionOffset = transform.position - new Vector3(Coloum * Distance / 2.0f, Row * Distance / 2.0f, 0) + Vector3.right*Distance/2;
+        Vector3 positionOffset = transform.position - new Vector3(Coloum * Distance / 2.0f, Row * Distance / 2.0f, 0) + Vector3.right * Distance / 2;
         for (int row = 0; row < Row; row++)
         {
             for (int column = 0; column < Coloum; column++)
             {
                 GameObject newTile = Instantiate(TilePrefab);
                 GameObject gridBG = Instantiate(GridPrefab);
-                SpriteRenderer renderer = newTile.GetComponent<SpriteRenderer>();
-                renderer.sprite = Sprites[UnityEngine.Random.Range(0, Sprites.Count)];
                 Tile tile = newTile.AddComponent<Tile>();
+                tile.SpriteRenderer.sprite = Sprites[UnityEngine.Random.Range(0, Sprites.Count)];
                 tile.Position = new Vector2Int(column, row);
+                tile.ID = spriteToIDDictionary[tile.SpriteRenderer.sprite];
                 gridBG.transform.parent = GridParent;
                 newTile.transform.parent = transform;
                 newTile.transform.position = new Vector3(column * Distance, row * Distance, 0) + positionOffset;
@@ -146,7 +163,7 @@ public class GridManager : Singleton<GridManager>
                 Grid[column, row] = newTile;
             }
         }
-        StartCoroutine(FillHoles());
+        StartCoroutine(FillHolesNew());
     }
     /// <summary>
     /// this function will swap the the tiles 
@@ -186,50 +203,50 @@ public class GridManager : Singleton<GridManager>
         //SwapPostAnimation(renderer1, renderer2);
     }
 
-    private void SwapPostAnimation(Hashtable paramHashtable)
-    {
-        var renderer1 = (SpriteRenderer)paramHashtable["value1"];
-        var renderer2 = (SpriteRenderer)paramHashtable["value2"];
-        var tile1 = (Transform)paramHashtable["value3"];
-        var tile2 = (Transform)paramHashtable["value4"];
-        Sprite temp = renderer1.sprite;
-        renderer1.sprite = renderer2.sprite;
-        renderer2.sprite = temp;
-        DynamicMultiplayer = 1;
-        bool changesOccurs = CheckMatches();
-        if (!changesOccurs)
-        {
-            iTween.MoveTo(tile1.gameObject, iTween.Hash(
-            "position", tile2.transform.position,
-            "islocal", true,
-            "easetype", iTween.EaseType.linear,
-            "time", 0.1f
-            ));
-            iTween.MoveTo(tile2.gameObject, iTween.Hash(
-            "position", tile1.transform.position,
-            "islocal", true,
-            "easetype", iTween.EaseType.linear,
-            "time", 0.1f));
-            temp = renderer1.sprite;
-            renderer1.sprite = renderer2.sprite;
-            renderer2.sprite = temp;
-            SoundManager.Instance.PlaySoundOneShot(SoundType.TypeMove);
-        }
-        else
-        {
-            NumMoves--;
-            var tempPos = tile1.transform.position;
-            tile1.position = tile2.position;
-            tile2.position = tempPos;
-            StartCoroutine(FillHoles());
-            //do
-            //{
-            //FillHoles();
-            Debug.Log("Fill the holes");
-            //} while (CheckMatches());
-        }
-        
-    }
+    //private void SwapPostAnimation(Hashtable paramHashtable)
+    //{
+    //    var renderer1 = (SpriteRenderer)paramHashtable["value1"];
+    //    var renderer2 = (SpriteRenderer)paramHashtable["value2"];
+    //    var tile1 = (Transform)paramHashtable["value3"];
+    //    var tile2 = (Transform)paramHashtable["value4"];
+    //    Sprite temp = renderer1.sprite;
+    //    renderer1.sprite = renderer2.sprite;
+    //    renderer2.sprite = temp;
+    //    DynamicMultiplayer = 1;
+    //    bool changesOccurs = CheckMatches();
+    //    if (!changesOccurs)
+    //    {
+    //        iTween.MoveTo(tile1.gameObject, iTween.Hash(
+    //        "position", tile2.transform.position,
+    //        "islocal", true,
+    //        "easetype", iTween.EaseType.linear,
+    //        "time", 0.1f
+    //        ));
+    //        iTween.MoveTo(tile2.gameObject, iTween.Hash(
+    //        "position", tile1.transform.position,
+    //        "islocal", true,
+    //        "easetype", iTween.EaseType.linear,
+    //        "time", 0.1f));
+    //        temp = renderer1.sprite;
+    //        renderer1.sprite = renderer2.sprite;
+    //        renderer2.sprite = temp;
+    //        SoundManager.Instance.PlaySoundOneShot(SoundType.TypeMove);
+    //    }
+    //    else
+    //    {
+    //        NumMoves--;
+    //        var tempPos = tile1.transform.position;
+    //        tile1.position = tile2.position;
+    //        tile2.position = tempPos;
+    //        StartCoroutine(FillHoles());
+    //        //do
+    //        //{
+    //        //FillHoles();
+    //        Debug.Log("Fill the holes");
+    //        //} while (CheckMatches());
+    //    }
+
+    //}
 
     /// <summary>
     /// this will retrn sprit rander 
@@ -248,6 +265,18 @@ public class GridManager : Singleton<GridManager>
         GameObject tile = Grid[column, row];
         SpriteRenderer renderer = tile.GetComponent<SpriteRenderer>();
         return renderer;
+    }
+    Tile GetTileAt(int column, int row)
+    {
+        if (column < 0 || column >= Coloum
+             || row < 0 || row >= Row)
+        {
+            Debug.LogError($"issue occred column :{column} ,row: {row} ");
+            return null;
+        }
+        GameObject tileGO = Grid[column, row];
+        Tile tile = tileGO.GetComponent<Tile>();
+        return tile;
     }
 
     bool CheckMatches()
@@ -343,6 +372,58 @@ public class GridManager : Singleton<GridManager>
             result.Add(nextColumn);
         }
         return result;
+    }
+
+    IEnumerator FillHolesNew()
+    {
+        if (setupCall)
+        {
+            yield return new WaitForSeconds(0f);
+        }
+        else
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+
+        for (int column = 0; column < Coloum; column++)
+        {
+            yield return new WaitForSeconds(0.01f);
+
+            for (int row = 0; row < Row; row++)
+            {
+                yield return new WaitForSeconds(0.01f);
+                while (GetSpriteRendererAt(column, row).sprite == null)
+                {
+                    Tile current = GetTileAt(column, row);
+                    current.SpriteRenderer.sprite = Sprites[UnityEngine.Random.Range(0, Sprites.Count)];
+                    current.ID = spriteToIDDictionary[current.SpriteRenderer.sprite];
+                }
+            }
+        }
+        if (CheckMatches())
+        {
+            DynamicMultiplayer++;
+            StopCoroutine(FillHolesNew());
+            StartCoroutine(FillHolesNew());
+        }
+        else if (setupCall)
+        {
+            setupCall = false;
+            timerHandler.StartTimer(Time);
+            timerHandler.UpdateZone += TimerHandler_UpdateZone;
+            timerHandler.TimerReachedToEnd += TimerHandler_TimerReachedEnd;
+        }
+        else if (NumMoves <= 0)
+        {
+            NumMoves = 0;
+
+            GameOver(Score >= TargetScore);
+
+        }
+        else if (Score >= TargetScore)
+        {
+            GameOver(true);
+        }
     }
 
     IEnumerator FillHoles()

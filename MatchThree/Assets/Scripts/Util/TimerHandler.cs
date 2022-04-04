@@ -119,9 +119,9 @@ namespace rudscreation.Utils
                 TotaltimeinSeconds--;
                 valueInzerotoOne = TotaltimeinSeconds * unitValue;
                 totaltimeinTimespan = TimeSpan.FromSeconds (TotaltimeinSeconds);
-                Debug.Log($"time left : {TotaltimeinSeconds}");
-                Debug.Log($"time left 0 to 1 : {valueInzerotoOne}");
-                Debug.Log($"time in timespan : {totaltimeinTimespan}");
+                //Debug.Log($"time left : {TotaltimeinSeconds}");
+                //Debug.Log($"time left 0 to 1 : {valueInzerotoOne}");
+                //Debug.Log($"time in timespan : {totaltimeinTimespan}");
 
             }
             if (TotaltimeinSeconds == 0)

@@ -203,50 +203,50 @@ public class GridManager : Singleton<GridManager>
         //SwapPostAnimation(renderer1, renderer2);
     }
 
-    //private void SwapPostAnimation(Hashtable paramHashtable)
-    //{
-    //    var renderer1 = (SpriteRenderer)paramHashtable["value1"];
-    //    var renderer2 = (SpriteRenderer)paramHashtable["value2"];
-    //    var tile1 = (Transform)paramHashtable["value3"];
-    //    var tile2 = (Transform)paramHashtable["value4"];
-    //    Sprite temp = renderer1.sprite;
-    //    renderer1.sprite = renderer2.sprite;
-    //    renderer2.sprite = temp;
-    //    DynamicMultiplayer = 1;
-    //    bool changesOccurs = CheckMatches();
-    //    if (!changesOccurs)
-    //    {
-    //        iTween.MoveTo(tile1.gameObject, iTween.Hash(
-    //        "position", tile2.transform.position,
-    //        "islocal", true,
-    //        "easetype", iTween.EaseType.linear,
-    //        "time", 0.1f
-    //        ));
-    //        iTween.MoveTo(tile2.gameObject, iTween.Hash(
-    //        "position", tile1.transform.position,
-    //        "islocal", true,
-    //        "easetype", iTween.EaseType.linear,
-    //        "time", 0.1f));
-    //        temp = renderer1.sprite;
-    //        renderer1.sprite = renderer2.sprite;
-    //        renderer2.sprite = temp;
-    //        SoundManager.Instance.PlaySoundOneShot(SoundType.TypeMove);
-    //    }
-    //    else
-    //    {
-    //        NumMoves--;
-    //        var tempPos = tile1.transform.position;
-    //        tile1.position = tile2.position;
-    //        tile2.position = tempPos;
-    //        StartCoroutine(FillHoles());
-    //        //do
-    //        //{
-    //        //FillHoles();
-    //        Debug.Log("Fill the holes");
-    //        //} while (CheckMatches());
-    //    }
+    private void SwapPostAnimation(Hashtable paramHashtable)
+    {
+        var renderer1 = (SpriteRenderer)paramHashtable["value1"];
+        var renderer2 = (SpriteRenderer)paramHashtable["value2"];
+        var tile1 = (Transform)paramHashtable["value3"];
+        var tile2 = (Transform)paramHashtable["value4"];
+        Sprite temp = renderer1.sprite;
+        renderer1.sprite = renderer2.sprite;
+        renderer2.sprite = temp;
+        DynamicMultiplayer = 1;
+        bool changesOccurs = CheckMatches();
+        if (!changesOccurs)
+        {
+            iTween.MoveTo(tile1.gameObject, iTween.Hash(
+            "position", tile2.transform.position,
+            "islocal", true,
+            "easetype", iTween.EaseType.linear,
+            "time", 0.1f
+            ));
+            iTween.MoveTo(tile2.gameObject, iTween.Hash(
+            "position", tile1.transform.position,
+            "islocal", true,
+            "easetype", iTween.EaseType.linear,
+            "time", 0.1f));
+            temp = renderer1.sprite;
+            renderer1.sprite = renderer2.sprite;
+            renderer2.sprite = temp;
+            SoundManager.Instance.PlaySoundOneShot(SoundType.TypeMove);
+        }
+        else
+        {
+            NumMoves--;
+            var tempPos = tile1.transform.position;
+            tile1.position = tile2.position;
+            tile2.position = tempPos;
+            StartCoroutine(FillHoles());
+            //do
+            //{
+            //FillHoles();
+            Debug.Log("Fill the holes");
+            //} while (CheckMatches());
+        }
 
-    //}
+    }
 
     /// <summary>
     /// this will retrn sprit rander 
@@ -266,6 +266,12 @@ public class GridManager : Singleton<GridManager>
         SpriteRenderer renderer = tile.GetComponent<SpriteRenderer>();
         return renderer;
     }
+    /// <summary>
+    /// This will return the Tile Component
+    /// </summary>
+    /// <param name="column"></param>
+    /// <param name="row"></param>
+    /// <returns></returns>
     Tile GetTileAt(int column, int row)
     {
         if (column < 0 || column >= Coloum

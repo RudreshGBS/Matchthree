@@ -302,13 +302,13 @@ public class GridManager : Singleton<GridManager>
                 if (horizontalMatches.Count >= 2)
                 {
                     matchedTiles.UnionWith(horizontalMatches);
-                    if(horizontalMatches.Count == 4)
+                    if(horizontalMatches.Count == 3)
                     {
                         Tile tile = current.GetComponent<Tile>();
                         tile.powerUP = PowerUP.Match4;
                         tile.SpriteRenderer.sprite = Match4;
                     }
-                    else if(horizontalMatches.Count == 5)
+                    else if(horizontalMatches.Count == 4)
                     {
                         Tile tile = current.GetComponent<Tile>();
                         tile.powerUP = PowerUP.Match5;
@@ -324,7 +324,22 @@ public class GridManager : Singleton<GridManager>
                 if (verticalMatches.Count >= 2)
                 {
                     matchedTiles.UnionWith(verticalMatches);
-                    matchedTiles.Add(current);
+                    if (verticalMatches.Count == 3)
+                    {
+                        Tile tile = current.GetComponent<Tile>();
+                        tile.powerUP = PowerUP.Match4;
+                        tile.SpriteRenderer.sprite = Match4;
+                    }
+                    else if (verticalMatches.Count == 4)
+                    {
+                        Tile tile = current.GetComponent<Tile>();
+                        tile.powerUP = PowerUP.Match5;
+                        tile.SpriteRenderer.sprite = Match5;
+                    }
+                    else
+                    {
+                        matchedTiles.Add(current);
+                    }
                 }
             }
         }
@@ -427,8 +442,8 @@ public class GridManager : Singleton<GridManager>
         if (CheckMatches())
         {
             DynamicMultiplayer++;
-            StopCoroutine(FillHolesNew());
-            StartCoroutine(FillHolesNew());
+            //StopCoroutine(FillHolesNew());
+            //StartCoroutine(FillHolesNew());
         }
         else if (setupCall)
         {

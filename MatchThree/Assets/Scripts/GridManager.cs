@@ -24,6 +24,10 @@ public class GridManager : Singleton<GridManager>
     public TextMeshProUGUI TargetScoreText;
     public TextMeshProUGUI TimerText;
 
+    public Sprite Match4;
+    public Sprite Match5;
+    public Sprite LShape;
+
     private int _numMoves;
     private int BaseMultiplayer =10;
     private int DynamicMultiplayer =1;
@@ -163,7 +167,7 @@ public class GridManager : Singleton<GridManager>
                 Grid[column, row] = newTile;
             }
         }
-        StartCoroutine(FillHolesNew());
+        StartCoroutine(FillHoles());
     }
     /// <summary>
     /// this function will swap the the tiles 
@@ -298,7 +302,22 @@ public class GridManager : Singleton<GridManager>
                 if (horizontalMatches.Count >= 2)
                 {
                     matchedTiles.UnionWith(horizontalMatches);
-                    matchedTiles.Add(current); 
+                    if(horizontalMatches.Count == 4)
+                    {
+                        Tile tile = current.GetComponent<Tile>();
+                        tile.powerUP = PowerUP.Match4;
+                        tile.SpriteRenderer.sprite = Match4;
+                    }
+                    else if(horizontalMatches.Count == 5)
+                    {
+                        Tile tile = current.GetComponent<Tile>();
+                        tile.powerUP = PowerUP.Match5;
+                        tile.SpriteRenderer.sprite = Match5;
+                    }
+                    else
+                    {
+                        matchedTiles.Add(current);
+                    }
                 }
 
                 List<SpriteRenderer> verticalMatches = FindRowMatchForTile(column, row, current.sprite);
@@ -309,7 +328,6 @@ public class GridManager : Singleton<GridManager>
                 }
             }
         }
-
         foreach (SpriteRenderer renderer in matchedTiles)
         {
             if (!setupCall)

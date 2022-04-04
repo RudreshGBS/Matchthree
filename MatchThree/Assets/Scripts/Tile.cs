@@ -2,8 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PowerUP
+{
+    None,
+    Match4,
+    Match5,
+    LShape
+}
+
 public class Tile : MonoBehaviour
 {
+    public PowerUP powerUP = PowerUP.None; 
     public int ID { get; set; }
     public SpriteRenderer SpriteRenderer { 
         get 

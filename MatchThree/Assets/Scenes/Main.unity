@@ -241,6 +241,9 @@ MonoBehaviour:
   ScoreText: {fileID: 1532274025}
   TargetScoreText: {fileID: 5780153526969454961}
   TimerText: {fileID: 5780153526969454960}
+  Match4: {fileID: 21300000, guid: 83ee70cddebee534a8c39685ba3f6333, type: 3}
+  Match5: {fileID: 21300000, guid: 42b822c826a686e489fbd15db6d2adc1, type: 3}
+  LShape: {fileID: 21300000, guid: 6c270714450500b4da294c3f39fbe6f2, type: 3}
 --- !u!1 &186752202
 GameObject:
   m_ObjectHideFlags: 0

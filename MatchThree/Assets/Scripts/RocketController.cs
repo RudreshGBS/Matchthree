@@ -69,7 +69,7 @@ public class RocketController : MonoBehaviour
                        "path", rocketWaypoints,
                        "looktime", 0.1f, 
                        "lookahead",0.1f,
-                       "time", 3f,
+                       "time", 5f,
                        "easetype",iTween.EaseType.linear,
                        "oncompletetarget",this.gameObject,
                        "oncomplete","OnLaunchComplete"

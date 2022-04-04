@@ -97,7 +97,7 @@ namespace rudscreation.Utils
                 }
                 else if (TotaltimeinSeconds <= (totalTime * 0.5f))
                 {
-                    if (TotaltimeinSeconds >= (totalTime * 0.1f))
+                    if (TotaltimeinSeconds >= (totalTime * 0.25f))
                     {
                         Debug.Log("50 to 10");
                         if (!isYellowInvoked)

@@ -31,6 +31,7 @@ public class GridManager : Singleton<GridManager>
     private int _numMoves;
     private int BaseMultiplayer =10;
     private int DynamicMultiplayer =1;
+    private int PowerUpMultiplayer =5;
 
     private List<Sprite> Sprites = new List<Sprite>();
     private Sprite blockFrame;
@@ -217,6 +218,19 @@ public class GridManager : Singleton<GridManager>
         renderer1.sprite = renderer2.sprite;
         renderer2.sprite = temp;
         DynamicMultiplayer = 1;
+        var TileScript1 = tile1.GetComponent<Tile>();
+        var TileScript2 = tile2.GetComponent<Tile>();
+        if (TileScript1.powerUP == PowerUP.Match4||TileScript2.powerUP == PowerUP.Match4) 
+        {
+            var powerUpTile = (TileScript1.powerUP == PowerUP.Match4)?TileScript2 : TileScript1;
+            MatchFour(powerUpTile);
+            NumMoves--;
+            var tempPos = tile1.transform.position;
+            tile1.position = tile2.position;
+            tile2.position = tempPos;
+            StartCoroutine(FillHoles());
+            return;
+        }
         bool changesOccurs = CheckMatches();
         if (!changesOccurs)
         {
@@ -251,6 +265,28 @@ public class GridManager : Singleton<GridManager>
         }
 
     }
+
+    private void MatchFour(Tile tile)
+    {
+        HashSet<SpriteRenderer> matchedTiles = new System.Collections.Generic.HashSet<SpriteRenderer>();
+        List<SpriteRenderer> verticalMatches = FindALLColumnMatchForTile(tile.Position.x, tile.Position.y);
+        matchedTiles.UnionWith(verticalMatches);
+        foreach (SpriteRenderer renderer in matchedTiles)
+        {
+            if (!setupCall)
+            {
+                renderer.transform.GetChild(0).gameObject.SetActive(true);
+            }
+            SoundManager.Instance.PlaySoundOneShot(SoundType.TypePop);
+            renderer.sprite = null;
+        }
+        if (!setupCall)
+        {
+            Score += (matchedTiles.Count * (BaseMultiplayer * PowerUpMultiplayer));
+            Debug.Log($"Base Mul : {BaseMultiplayer} powerup Mul: {PowerUpMultiplayer}");
+        }
+    }
+
 
     /// <summary>
     /// this will retrn sprit rander 
@@ -397,7 +433,16 @@ public class GridManager : Singleton<GridManager>
         }
         return result;
     }
-
+    private List<SpriteRenderer> FindALLColumnMatchForTile(int column, int row)
+    {
+        List<SpriteRenderer> result = new List<SpriteRenderer>();
+        for (int i = row; i < Row; i++)
+        {
+            SpriteRenderer nextRow = GetSpriteRendererAt(column, i);
+            result.Add(nextRow);
+        }
+        return result;
+    }
     private List<SpriteRenderer> FindColumnMatchForTile(int column, int row, Sprite sprite)
     {
         List<SpriteRenderer> result = new List<SpriteRenderer>();

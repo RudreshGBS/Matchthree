@@ -1863,11 +1863,23 @@ PrefabInstance:
     - target: {fileID: 1438527716975853833, guid: c749767057a244c22bcbe007c8dcf5b7, type: 3}
       propertyPath: GamePlayClip
       value: 
-      objectReference: {fileID: 8300000, guid: 6ee0694e38419fc489adfede10501e43, type: 3}
+      objectReference: {fileID: 8300000, guid: 61e534b31fb42774b8ed281e954ab241, type: 3}
     - target: {fileID: 1438527716975853833, guid: c749767057a244c22bcbe007c8dcf5b7, type: 3}
       propertyPath: MainMenuClip
       value: 
       objectReference: {fileID: 8300000, guid: ed5d53440a46509438a2c1b91c00f61e, type: 3}
+    - target: {fileID: 1438527716975853833, guid: c749767057a244c22bcbe007c8dcf5b7, type: 3}
+      propertyPath: clips.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: fb71f5023d8c54a6fb7ecc98c6f90726, type: 3}
+    - target: {fileID: 1438527716975853833, guid: c749767057a244c22bcbe007c8dcf5b7, type: 3}
+      propertyPath: clips.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: dfeabde5e0ff2904a860a81609891927, type: 3}
+    - target: {fileID: 1438527716975853833, guid: c749767057a244c22bcbe007c8dcf5b7, type: 3}
+      propertyPath: clips.Array.data[2]
+      value: 
+      objectReference: {fileID: 8300000, guid: 67d06b027a2a7f8419ae1c94b76d17d7, type: 3}
     - target: {fileID: 1438527716975853834, guid: c749767057a244c22bcbe007c8dcf5b7, type: 3}
       propertyPath: m_RootOrder
       value: 7

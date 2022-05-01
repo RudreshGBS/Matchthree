@@ -5,16 +5,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity;
 using System.Linq;
+using System.Threading.Tasks;
 
 public class FirebaseManager : MonoBehaviour
 {
-   public UserList LeaderboardList = new UserList();
+    public UserList LeaderboardList = new UserList();
     UserList userlist = new UserList();
     DatabaseReference databaseReference;
     void Start()
     {
         databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
-        PopulateLeaderBoard(0);
+        //PopulateLeaderBoard(0);
 
         //for (int i = 1; i <= 10; i++)
         //{
@@ -30,8 +31,8 @@ public class FirebaseManager : MonoBehaviour
         user1.score = score.ToString();
         userlist.Users.Add(user1);
         var jsondata = JsonUtility.ToJson(userlist);
-        Debug.Log("Saved Data : " + jsondata);
         databaseReference.SetRawJsonValueAsync(jsondata);
+        Debug.Log("Saved Data : " + jsondata);
 
         /// Last Working Structure
         //databaseReference.Child("Users").Child(id).Child("Score").SetValueAsync(score);
@@ -39,14 +40,13 @@ public class FirebaseManager : MonoBehaviour
     }
 
 
-    void PopulateLeaderBoard(int LoadLimit = 0)
+    async Task PopulateLeaderBoard(int LoadLimit = 0)
     {
-
-        var top5 = (LoadLimit == 0)? FirebaseDatabase.DefaultInstance.GetReference("Users").OrderByChild("score") : FirebaseDatabase.DefaultInstance.GetReference("Users").OrderByChild("score").LimitToFirst(LoadLimit);
+        var top5 = (LoadLimit == 0) ? FirebaseDatabase.DefaultInstance.GetReference("Users").OrderByChild("score") : FirebaseDatabase.DefaultInstance.GetReference("Users").OrderByChild("score").LimitToFirst(LoadLimit);
         // Keep this query synced.
         top5.KeepSynced(true);
 
-        top5.GetValueAsync().ContinueWith(task =>
+        await top5.GetValueAsync().ContinueWith(task =>
         {
             if (task.Exception != null)
             {
@@ -69,58 +69,44 @@ public class FirebaseManager : MonoBehaviour
                     LeaderboardList.Users.Add(user1);
                     //Debug.Log("Loaded Data: ID: " + record.Child("id").GetRawJsonValue() + " Score: " + record.Child("score").GetRawJsonValue());
                 }
-
             }
         });
-
-        
-        ///Last Working Get UserList Data into Json!!!
-        //databaseReference.OrderByChild("score").GetValueAsync().ContinueWith(task =>
-        //{
-        //    if (task.IsCompleted && !task.IsFaulted)
-        //    {
-        //        DataSnapshot data = task.Result;
-        //        var jsondata = data.GetRawJsonValue();
-        //        //UserList finalList = JsonUtility.FromJson<UserList>(jsondata);
-        //        UserList finalList = new UserList();
-        //        JsonUtility.FromJsonOverwrite(jsondata, finalList);
-        //        //Debug.Log("JSON: " + finalList.Users.Count);
-        //        finalList.Users.ForEach(x =>
-        //        {
-        //            Debug.Log("ID: " + x.id + "Score: " + x.score);
-        //        });
-        //    }
-        //});
-
-
-        //databaseReference.GetValueAsync().ContinueWith(task =>
-        //{
-        //    if (task.IsCompleted && !task.IsFaulted)
-        //    {
-        //        DataSnapshot data = task.Result;
-        //        var jsondata = data.GetRawJsonValue();
-        //        //UserList finalList = JsonUtility.FromJson<UserList>(jsondata);
-        //        UserList finalList = new UserList();
-        //        JsonUtility.FromJsonOverwrite(jsondata, finalList);
-        //        //Debug.Log("JSON: " + finalList.Users.Count);
-        //        finalList.Users.ForEach(x =>
-        //        {
-        //            Debug.Log("ID: " + x.id + "Score: " + x.score);
-        //        });
-        //    }
-        //});
     }
 
-    IEnumerator ShowLeaderboard()
+    //IEnumerator ShowLeaderboard()
+    //{
+    //    PopulateLeaderBoard(0);
+    //    yield return new WaitForSeconds(2f);
+    //    if (LeaderboardList.Users.Count > 0)
+    //    {
+    //        foreach (var child in LeaderboardList.Users)
+    //        {
+    //            Debug.Log(child.id + " " + child.score);
+    //        }
+    //    }
+    //}
+
+    public async void ShowLeaderboard()
     {
-        yield return new WaitForSeconds(5f);
-        foreach (var child in LeaderboardList.Users)
+        await PopulateLeaderBoard(0);
+        
+        if (LeaderboardList.Users.Count > 0)
         {
-            Debug.Log(child.id + " " + child.score);
+            foreach (var child in LeaderboardList.Users)
+            {
+                Debug.Log(child.id + " " + child.score);
+            }
         }
     }
-}
 
+
+    public void OnShowLeaderboardButtonClicked()
+    {
+        ShowLeaderboard();
+        //StartCoroutine(ShowLeaderboard());
+    }
+
+}
 [System.Serializable]
 public class UserList
 {

@@ -12,7 +12,7 @@ public enum PowerUP
 
 public class Tile : MonoBehaviour
 {
-    public PowerUP powerUP = PowerUP.None; 
+    public PowerUP powerUP; 
     public int ID { get; set; }
     public SpriteRenderer SpriteRenderer { 
         get 

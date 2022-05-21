@@ -42,6 +42,7 @@ public class FirebaseManager : MonoBehaviour
 
     async Task PopulateLeaderBoard(int LoadLimit = 0)
     {
+        LeaderboardList.Users.Clear();
         var top5 = (LoadLimit == 0) ? FirebaseDatabase.DefaultInstance.GetReference("Users").OrderByChild("score") : FirebaseDatabase.DefaultInstance.GetReference("Users").OrderByChild("score").LimitToFirst(LoadLimit);
         // Keep this query synced.
         top5.KeepSynced(true);

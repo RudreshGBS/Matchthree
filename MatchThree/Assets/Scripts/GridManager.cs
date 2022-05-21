@@ -42,7 +42,7 @@ public class GridManager : Singleton<GridManager>
     private int TargetScore;
     private TimeSpan Time;
     private TimerHandler timerHandler;
-
+    public PowerUP CurrentpowerUP;
     bool setupCall = true;
     public Action<int> OnLevelResult; 
     public int NumMoves
@@ -80,7 +80,22 @@ public class GridManager : Singleton<GridManager>
         GameOverMenu.gameObject.SetActive(false);
         timerHandler = TimerHandler.Instance;
     }
-
+    private Sprite GetPoweUpSprite(PowerUP powerUP) 
+    {
+        switch (powerUP)
+        {
+            case PowerUP.None:
+                return null;
+            case PowerUP.Match4:
+                return Match4;
+            case PowerUP.Match5:
+                return Match5;
+            case PowerUP.LShape:
+                return LShape;
+            default:
+                return null;
+        }
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -223,7 +238,7 @@ public class GridManager : Singleton<GridManager>
         DynamicMultiplayer = 1;
         var TileScript1 = tile1.GetComponent<Tile>();
         var TileScript2 = tile2.GetComponent<Tile>();
-            List<SpriteRenderer> BombMatches = new List<SpriteRenderer>();
+        List<SpriteRenderer> BombMatches = new List<SpriteRenderer>();
         if (!setupCall)
         {
            
@@ -269,25 +284,26 @@ public class GridManager : Singleton<GridManager>
                 return;
             }
 
-            List<SpriteRenderer> Tile1Matches = FindRowAndColumMatchForTile(TileScript1.Position.x, TileScript1.Position.y, TileScript1.SpriteRenderer.sprite);
-            List<SpriteRenderer> Tile2Matches = FindRowAndColumMatchForTile(TileScript2.Position.x, TileScript2.Position.y, TileScript2.SpriteRenderer.sprite);
-            if (Tile1Matches.Count >= 4)
+            
+            List<SpriteRenderer> Tile1Matches = MatchCheckForPowerUps(TileScript1);
+            List<SpriteRenderer> Tile2Matches = MatchCheckForPowerUps(TileScript2);
+            if (Tile1Matches?.Count >= 3)
             {
                 BombMatches = Tile1Matches;
                 Tile tile = renderer2.GetComponent<Tile>();
-                tile.powerUP = PowerUP.LShape;
-                tile.SpriteRenderer.sprite = LShape;
+                tile.powerUP = CurrentpowerUP;
+                tile.SpriteRenderer.sprite = GetPoweUpSprite(tile.powerUP);
             }
-            else if (Tile2Matches.Count >= 4)
+            else if (Tile2Matches?.Count >= 3)
             {
                 BombMatches = Tile2Matches;
                 Tile tile = renderer1.GetComponent<Tile>();
-                tile.powerUP = PowerUP.LShape;
-                tile.SpriteRenderer.sprite = LShape;
+                tile.powerUP = CurrentpowerUP;
+                tile.SpriteRenderer.sprite = GetPoweUpSprite(tile.powerUP);
             }
 
         }
-      
+
         bool changesOccurs = CheckMatches(BombMatches);
         if (!changesOccurs)
         {
@@ -321,6 +337,45 @@ public class GridManager : Singleton<GridManager>
             //} while (CheckMatches());
         }
 
+    }
+
+    private List<SpriteRenderer> MatchCheckForPowerUps(Tile tile) 
+    {
+
+        List<SpriteRenderer> matchForBomb = FindRowAndColumMatchForTile(tile.Position.x, tile.Position.y, tile.SpriteRenderer.sprite);
+        
+         if (matchForBomb.Count >= 4)
+         {
+            CurrentpowerUP = PowerUP.LShape;
+            return matchForBomb;
+         }
+        else 
+        {
+            List<SpriteRenderer> horizontalMatches = FindAllColumMatchForTile(tile.Position.x, tile.Position.y, tile.SpriteRenderer.sprite);
+            if (horizontalMatches.Count == 4)
+            {
+                CurrentpowerUP = PowerUP.Match4;
+                return horizontalMatches;
+            }
+            else if (horizontalMatches.Count > 4) 
+            {
+                CurrentpowerUP = PowerUP.Match5;
+                return horizontalMatches;
+            }
+            List<SpriteRenderer> verticalMatches = FindALLRowMatchForTile(tile.Position.x, tile.Position.y, tile.SpriteRenderer.sprite);
+            if (verticalMatches.Count == 4)
+            {
+                CurrentpowerUP = PowerUP.Match4;
+                return verticalMatches;
+            }
+            else if (verticalMatches.Count > 4)
+            {
+                CurrentpowerUP = PowerUP.Match5;
+                return verticalMatches;
+            }
+        }
+        CurrentpowerUP = PowerUP.None;
+        return null;
     }
 
     private void Bomb(Tile matchUpTile)
@@ -434,8 +489,6 @@ public class GridManager : Singleton<GridManager>
             for (int column = 0; column < Coloum; column++)
             {
                 SpriteRenderer current = GetSpriteRendererAt(column, row);
-
-                List<SpriteRenderer> horizontalMatches = FindColumnMatchForTile(column, row, current.sprite);
                 List<SpriteRenderer> Matches = new List<SpriteRenderer>();
                 if (t != null)
                 {
@@ -444,7 +497,7 @@ public class GridManager : Singleton<GridManager>
                 }
                 else 
                 { 
-                     Matches = FindRowAndColumMatchForTile(column, row, current.sprite);
+                    Matches = FindRowAndColumMatchForTile(column, row, current.sprite);
                 }
 
 
@@ -453,6 +506,7 @@ public class GridManager : Singleton<GridManager>
                     matchedTiles.UnionWith(Matches);
                   
                 }
+                List<SpriteRenderer> horizontalMatches = FindColumnMatchForTile(column, row, current.sprite);
 
                 if (horizontalMatches.Count >= 2)
                 {
@@ -460,7 +514,7 @@ public class GridManager : Singleton<GridManager>
                     matchedTiles.UnionWith(horizontalMatches);
                     if (!setupCall)
                     {
-                       
+
 
                         if (horizontalMatches.Count == 3)
                         {
@@ -491,7 +545,7 @@ public class GridManager : Singleton<GridManager>
                     matchedTiles.UnionWith(verticalMatches);
                     if (!setupCall)
                     {
-                       
+
                         if (verticalMatches.Count == 3)
                         {
                             Tile tile = current.GetComponent<Tile>();
@@ -559,7 +613,7 @@ public class GridManager : Singleton<GridManager>
     }
     private List<SpriteRenderer> FindRowAndColumMatchForTile(int column, int row, Sprite sprite)
     {
-        List<SpriteRenderer> result = new List<SpriteRenderer>();
+        HashSet<SpriteRenderer> result = new HashSet<SpriteRenderer>();
         List<SpriteRenderer> RowList = new List<SpriteRenderer>();
         List<SpriteRenderer> ColList = new List<SpriteRenderer>();
         for (int k = -1; k < 2; k++)
@@ -575,9 +629,9 @@ public class GridManager : Singleton<GridManager>
                     }
                     ColList.Add(nextRow);
                 }
-                for (int i = column + k; i < Coloum; i++)
+                for (int j = column + k; j < Coloum; j++)
                 {
-                    SpriteRenderer nextColumn = GetSpriteRendererAt(i, row);
+                    SpriteRenderer nextColumn = GetSpriteRendererAt(j, row);
                     if (nextColumn == null || nextColumn.sprite != sprite)
                     {
                         break;
@@ -588,10 +642,65 @@ public class GridManager : Singleton<GridManager>
         }
         if (RowList.Count >= 2 && ColList.Count >= 2) 
         {
-            result.AddRange(ColList);
-            result.AddRange(RowList);
+            result.UnionWith(ColList);
+            result.UnionWith(RowList);
         }
-        return result;
+        return result.ToList();
+    }
+    private List<SpriteRenderer> FindAllColumMatchForTile(int column, int row, Sprite sprite)
+    {
+        HashSet<SpriteRenderer> result = new HashSet<SpriteRenderer>();
+        HashSet<SpriteRenderer> result1 = new HashSet<SpriteRenderer>();
+        
+            
+        for (int i = column ; i < Coloum; i++)
+        {
+            SpriteRenderer nextColumn = GetSpriteRendererAt(i, row);
+            if (nextColumn == null || nextColumn.sprite != sprite)
+            {
+                break;
+            }
+            result.Add(nextColumn);
+        }
+
+        for (int j = column; j >= 0; j--)
+        {
+            SpriteRenderer nextColumn = GetSpriteRendererAt(j, row);
+            if (nextColumn == null || nextColumn.sprite != sprite)
+            {
+                break;
+            }
+            result1.Add(nextColumn);
+        }
+        result.UnionWith(result1);
+        return result.ToList();
+    }
+    private List<SpriteRenderer> FindALLRowMatchForTile(int column, int row, Sprite sprite)
+    {
+        HashSet<SpriteRenderer> result = new HashSet<SpriteRenderer>();
+        HashSet<SpriteRenderer> result1 = new HashSet<SpriteRenderer>();
+
+
+        for (int i = row ; i < Row; i++)
+        {
+            SpriteRenderer nextRow = GetSpriteRendererAt(column, i);
+            if (nextRow == null || nextRow.sprite != sprite)
+            {
+                break;
+            }
+            result.Add(nextRow);
+        }
+        for (int j = row; j >= 0; j--)
+        {
+            SpriteRenderer nextRow = GetSpriteRendererAt(column, j);
+            if (nextRow == null || nextRow.sprite != sprite)
+            {
+                break;
+            }
+            result1.Add(nextRow);
+        }
+        result.UnionWith(result1);
+        return result.ToList();
     }
     private List<SpriteRenderer> FindRowMatchForTile(int column, int row, Sprite sprite)
     {

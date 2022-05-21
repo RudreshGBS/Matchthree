@@ -13,6 +13,7 @@ public class GridManager : Singleton<GridManager>
     public GameObject GridPrefab;
     public Transform GridParent;
     public SpriteRenderer BG;
+    public SpriteRenderer EGTItem;
     //public int GridDimension = 8;
    
     public float Distance = 1.0f;
@@ -109,6 +110,7 @@ public class GridManager : Singleton<GridManager>
             Coloum = level.cols;
             StartingMoves = level.maxMoves;
             BG.sprite = level.background;
+            EGTItem.sprite = level.EGTItem;
             TargetScore = level.tagetScore;
             LevelText.text = $"Level{level.levelNo}";
             Time = new TimeSpan(0, 0, level.time);

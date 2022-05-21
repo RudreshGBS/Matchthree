@@ -20,11 +20,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 1d602dda8985cb540be0eb01c15a84a3, type: 3}
   - {fileID: 21300000, guid: c513d9b2ec1626540b6ab4b3ba13d636, type: 3}
   - {fileID: 21300000, guid: b701c31f4c7031b409d667d186c2afc7, type: 3}
-  - {fileID: 21300000, guid: 07ca4b35ae4b3c643bd647abe2465f16, type: 3}
-  - {fileID: 21300000, guid: b5396a99b5af7214299a8cf5c571cb43, type: 3}
-  - {fileID: 21300000, guid: 4d2b76174406dd148a8bb7745c11d658, type: 3}
-  background: {fileID: 21300000, guid: 1eebf783d344ad8478fedc59afa8a1ae, type: 3}
-  blockFrame: {fileID: 21300000, guid: e7a43e76efc430d4daee1930be40359b, type: 3}
+  background: {fileID: 21300000, guid: 8f8f9f99407a9314f851388a3fc175c2, type: 3}
+  EGTItem: {fileID: 21300000, guid: adef887220dc9f54a90dc85d5198fd97, type: 3}
+  blockFrame: {fileID: 21300000, guid: 3698e638cd44c484bb09bd9a3026876b, type: 3}
   rows: 8
   cols: 5
   maxMoves: 15

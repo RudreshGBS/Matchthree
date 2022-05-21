@@ -18,10 +18,10 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 636beb517016a2743bbba0eb59bb4799, type: 3}
   - {fileID: 21300000, guid: b701c31f4c7031b409d667d186c2afc7, type: 3}
   - {fileID: 21300000, guid: 1d602dda8985cb540be0eb01c15a84a3, type: 3}
-  - {fileID: 21300000, guid: c513d9b2ec1626540b6ab4b3ba13d636, type: 3}
-  background: {fileID: 21300000, guid: 3c51a7a4ff66aed4097ad90083651868, type: 3}
-  blockFrame: {fileID: 21300000, guid: 208767e75f3116446886eba2ba19997a, type: 3}
-  rows: 6
+  background: {fileID: 21300000, guid: cfe6ab9dd4444ad479734eb34af079ba, type: 3}
+  EGTItem: {fileID: 21300000, guid: b075ff1cea23ad14f92f8212f317c3f1, type: 3}
+  blockFrame: {fileID: 21300000, guid: 3698e638cd44c484bb09bd9a3026876b, type: 3}
+  rows: 7
   cols: 5
   maxMoves: 25
   time: 150

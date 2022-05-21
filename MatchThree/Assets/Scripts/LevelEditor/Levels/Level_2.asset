@@ -17,9 +17,10 @@ MonoBehaviour:
   - {fileID: 21300000, guid: c513d9b2ec1626540b6ab4b3ba13d636, type: 3}
   - {fileID: 21300000, guid: b701c31f4c7031b409d667d186c2afc7, type: 3}
   - {fileID: 21300000, guid: 2fe6786c021987d48a5dc5b6f9200dfa, type: 3}
-  background: {fileID: 21300000, guid: c7fc533af39b2ae42beb717c7481e956, type: 3}
-  blockFrame: {fileID: 21300000, guid: e7a43e76efc430d4daee1930be40359b, type: 3}
-  rows: 5
+  background: {fileID: 21300000, guid: 1a4bd97b15dce854584a1d79a06c774c, type: 3}
+  EGTItem: {fileID: 21300000, guid: b0a5cdf63de87a645883c816737cc2c2, type: 3}
+  blockFrame: {fileID: 21300000, guid: 3698e638cd44c484bb09bd9a3026876b, type: 3}
+  rows: 6
   cols: 5
   maxMoves: 10
   time: 180

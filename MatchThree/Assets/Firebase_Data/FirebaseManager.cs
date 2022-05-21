@@ -42,6 +42,7 @@ public class FirebaseManager : MonoBehaviour
 
     async Task PopulateLeaderBoard(int LoadLimit = 0)
     {
+        LeaderboardList.Users.Clear();
         var top5 = (LoadLimit == 0) ? FirebaseDatabase.DefaultInstance.GetReference("Users").OrderByChild("score") : FirebaseDatabase.DefaultInstance.GetReference("Users").OrderByChild("score").LimitToFirst(LoadLimit);
         // Keep this query synced.
         top5.KeepSynced(true);
@@ -73,39 +74,20 @@ public class FirebaseManager : MonoBehaviour
         });
     }
 
-    //IEnumerator ShowLeaderboard()
-    //{
-    //    PopulateLeaderBoard(0);
-    //    yield return new WaitForSeconds(2f);
-    //    if (LeaderboardList.Users.Count > 0)
-    //    {
-    //        foreach (var child in LeaderboardList.Users)
-    //        {
-    //            Debug.Log(child.id + " " + child.score);
-    //        }
-    //    }
-    //}
-
-    public async void ShowLeaderboard()
+    public async Task<List<User>> OnShowLeaderboardButtonClicked()
     {
-        await PopulateLeaderBoard(0);
-        
+        await PopulateLeaderBoard(5);
         if (LeaderboardList.Users.Count > 0)
         {
-            foreach (var child in LeaderboardList.Users)
-            {
-                Debug.Log(child.id + " " + child.score);
-            }
+            return LeaderboardList.Users;
         }
-    }
-
-
-    public void OnShowLeaderboardButtonClicked()
-    {
-        ShowLeaderboard();
+        else
+        {
+            Debug.LogError("User List is Empty");
+            return LeaderboardList.Users;
+        }
         //StartCoroutine(ShowLeaderboard());
     }
-
 }
 [System.Serializable]
 public class UserList

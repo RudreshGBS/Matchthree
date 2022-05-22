@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 public class GameOverManager : MonoBehaviour
 {
     public GameObject levelselctionButton;
+    public GameObject achievementPanel;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI resultText;
 
@@ -45,6 +46,7 @@ public class GameOverManager : MonoBehaviour
     {
         scoreText.text = score.ToString();
         levelselctionButton.SetActive(isPass);
+        achievementPanel.SetActive(isPass);
         resultText.text = isPass?"Pass":"Fail";
         resultText.color = isPass?Color.green:Color.red;
     }

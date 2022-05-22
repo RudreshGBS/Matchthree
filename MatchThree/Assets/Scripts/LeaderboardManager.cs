@@ -13,6 +13,11 @@ public class LeaderboardManager : MonoBehaviour
     public async void PopulateLeaderBoard()
     {
         var UserList = await firebaseManager.OnShowLeaderboardButtonClicked();
+        if(UserList == null)
+        {
+            Debug.LogError("Leaderboard List is Empty!!");
+            return;
+        }
         if (UserList.Count > 0)
         {
             foreach (var user in UserList)

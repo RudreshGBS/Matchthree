@@ -9,9 +9,9 @@ using UnityEngine;
 /// </summary>
 public static class GameDataStore 
 {
-    private static int val;
-
     public static int CurrentLevel { get; set; }
+
+    private static int val;
 
     public static int LastUnloackedLevel 
     {
@@ -25,11 +25,35 @@ public static class GameDataStore
         } 
     }
     public static int Score { get; set; }
+    
+    public static bool isFirsttime = true;
+
+    public static bool CanMoveRocket = true;
+
+    private static string key;
+    
+    public static string Key
+    {
+        get
+        {
+            key = PlayerPrefs.GetString("DatabaseKey");
+            return key ?? null;
+        }
+        set
+        {
+            key = value;
+            PlayerPrefs.SetString("DatabaseKey", value);
+        }
+    }
+
+
     public static void LoadData()
     {
         //Load from Realtime Database
     }
+    public static void SaveData()
+    {
 
-    public static bool isFirsttime= true;
-    public static bool CanMoveRocket= true;
+    }
+    
 }

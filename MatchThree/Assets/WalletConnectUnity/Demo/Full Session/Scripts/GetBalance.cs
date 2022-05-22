@@ -49,17 +49,49 @@ public class GetBalance : WalletConnectActions
         resultText.gameObject.SetActive(true);
         Debug.Log(balance);
         var id = WalletConnect.ActiveSession.Accounts[0].ToString();
-            if (firebaseManager.LeaderboardList.Users.Count > 0)
+            //if (firebaseManager.LeaderboardList.Users.Count > 0)
+            //{
+            //    User currentUser = firebaseManager.LeaderboardList.Users.FirstOrDefault(user => user.id.Contains(id));
+            //    if (currentUser == null)
+            //    {
+            //        firebaseManager.SaveUsernameScore(WalletConnect.ActiveSession.Accounts[0], 0);
+            //    }
+            //}
+            //else 
+            //{
+            //    firebaseManager.SaveUsernameScore(WalletConnect.ActiveSession.Accounts[0], 0);
+            //}
+            if(!string.IsNullOrEmpty(GameDataStore.Key))
             {
-                User currentUser = firebaseManager.LeaderboardList.Users.FirstOrDefault(user => user.id.Contains(id));
-                if (currentUser == null)
+                firebaseManager.CheckExisitngUserInDatabaseWitKey(GameDataStore.Key, id, ()=>
                 {
-                    firebaseManager.saveData(WalletConnect.ActiveSession.Accounts[0], 0);
-                }
+                    if (firebaseManager.IsUserValid)
+                    {
+                        Debug.Log("Existing User found, Loading the Data Now!");
+
+                    }
+                    {
+                        Debug.Log("No User Found in database, Creating a new User");
+                        firebaseManager.SaveUsernameScore(WalletConnect.ActiveSession.Accounts[0], 0);
+                    }
+                });
             }
-            else 
+            else
             {
-                firebaseManager.saveData(WalletConnect.ActiveSession.Accounts[0], 0);
+                Debug.Log("Local Database Key not found, Searching for the Username in the Database");
+                firebaseManager.CheckExisitngUserInDatabaseWithoutKey(id, (value)=> 
+                {
+                    if(value)
+                    {
+                        Debug.Log("Username in Database found");
+
+                    }
+                    else
+                    {
+                        Debug.Log("No User Found in database, Creating a new User");
+                        firebaseManager.SaveUsernameScore(WalletConnect.ActiveSession.Accounts[0], 0);
+                    }
+                });
             }
             onGettingBalance?.Invoke();
         }));

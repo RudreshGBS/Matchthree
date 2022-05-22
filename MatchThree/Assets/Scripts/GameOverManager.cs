@@ -49,6 +49,10 @@ public class GameOverManager : MonoBehaviour
         achievementPanel.SetActive(isPass);
         resultText.text = isPass?"Pass":"Fail";
         resultText.color = isPass?Color.green:Color.red;
+        if(isPass)
+        {
+            GameDataStore.SaveData(score);
+        }
     }
   
     public void RestartLevel()

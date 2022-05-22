@@ -16,7 +16,7 @@ public class GetBalance : WalletConnectActions
     public FirebaseManager firebaseManager;
     public int bal;
     public Action onGettingBalance;
-   
+
 
     [Function("balanceOf", "uint256")]
     public class BalanceOfFunction : FunctionMessage
@@ -36,39 +36,27 @@ public class GetBalance : WalletConnectActions
     void OnEnable()
     {
     }
-  
-    public void Balance() 
-	{
+
+    public void Balance()
+    {
         accountText.text = $"ID:{WalletConnect.ActiveSession.Accounts[0]}";
 
         StartCoroutine(getAccountBalance(WalletConnect.ActiveSession.Accounts[0], (balance) =>
         {
-        // When the callback is called, we are just going print the balance of the account
-        bal = Mathf.FloorToInt((float)balance);
-        resultText.text = $"your account balance is  :{bal}";
-        resultText.gameObject.SetActive(true);
-        Debug.Log(balance);
-        var id = WalletConnect.ActiveSession.Accounts[0].ToString();
-            //if (firebaseManager.LeaderboardList.Users.Count > 0)
-            //{
-            //    User currentUser = firebaseManager.LeaderboardList.Users.FirstOrDefault(user => user.id.Contains(id));
-            //    if (currentUser == null)
-            //    {
-            //        firebaseManager.SaveUsernameScore(WalletConnect.ActiveSession.Accounts[0], 0);
-            //    }
-            //}
-            //else 
-            //{
-            //    firebaseManager.SaveUsernameScore(WalletConnect.ActiveSession.Accounts[0], 0);
-            //}
-            if(!string.IsNullOrEmpty(GameDataStore.Key))
+            // When the callback is called, we are just going print the balance of the account
+            bal = Mathf.FloorToInt((float)balance);
+            resultText.text = $"your account balance is  :{bal}";
+            resultText.gameObject.SetActive(true);
+            Debug.Log(balance);
+            var id = WalletConnect.ActiveSession.Accounts[0].ToString();
+            if (!string.IsNullOrEmpty(GameDataStore.Key))
             {
-                firebaseManager.CheckExisitngUserInDatabaseWitKey(GameDataStore.Key, id, ()=>
+                firebaseManager.CheckExisitngUserInDatabaseWitKey(GameDataStore.Key, id, () =>
                 {
                     if (firebaseManager.IsUserValid)
                     {
                         Debug.Log("Existing User found, Loading the Data Now!");
-
+                        GameDataStore.LoadData();
                     }
                     {
                         Debug.Log("No User Found in database, Creating a new User");
@@ -79,12 +67,12 @@ public class GetBalance : WalletConnectActions
             else
             {
                 Debug.Log("Local Database Key not found, Searching for the Username in the Database");
-                firebaseManager.CheckExisitngUserInDatabaseWithoutKey(id, (value)=> 
+                firebaseManager.CheckExisitngUserInDatabaseWithoutKey(id, (value) =>
                 {
-                    if(value)
+                    if (value)
                     {
                         Debug.Log("Username in Database found");
-
+                        GameDataStore.LoadData();
                     }
                     else
                     {
@@ -102,10 +90,10 @@ public class GetBalance : WalletConnectActions
     //{
     //    if (WalletConnect.ActiveSession.Accounts == null)
     //        return;
-        
+
     //    accountText.text = "\nConnected to Chain " + WalletConnect.ActiveSession.ChainId + ":\n" + WalletConnect.ActiveSession.Accounts[0];
     //}
-    
+
 
     public void OnClickDisconnectAndConnect()
     {

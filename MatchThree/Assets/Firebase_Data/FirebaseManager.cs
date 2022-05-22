@@ -49,6 +49,17 @@ public class FirebaseManager : MonoBehaviour
         //        Debug.Log("No User Found in database, Creating a new User");
         //    }
         //});
+
+
+        //------------------------Check Loading Data-----------------------
+        //GameDataStore.Key = "-N2fHF6-zIzvKlSd1myN";
+        //GameDataStore.LoadData();
+
+
+        //------------------------Check Saving Data-----------------------
+        //GameDataStore.Key = "-N2fHF6-zIzvKlSd1myN";
+        //SaveScore(255, null);
+
     }
 
 
@@ -111,7 +122,31 @@ public class FirebaseManager : MonoBehaviour
         //StartCoroutine(ShowLeaderboard());
     }
 
+    public static async Task<string> LoadScore()
+    {
+        string res = null;
+        await FirebaseDatabase.DefaultInstance.GetReference("Users").Child(GameDataStore.Key).Child("score").GetValueAsync().ContinueWith(task => 
+        {
+            if (task.Result != null)
+            {
+                DataSnapshot result = task.Result;
+                res = result.Value.ToString() ?? null;
+            }
+        });
+        return res ?? null;
+    }
 
+
+    public static async void SaveScore(int score, Action OnSucess)
+    {
+        await FirebaseDatabase.DefaultInstance.GetReference("Users").Child(GameDataStore.Key).Child("score").SetValueAsync(score).ContinueWith(task =>
+        {
+            if(task.IsCompleted)
+            {
+                OnSucess?.Invoke();
+            }
+        });
+    }
     #endregion
 
     #region Private Methods
@@ -125,8 +160,11 @@ public class FirebaseManager : MonoBehaviour
             .GetValueAsync()
             .ContinueWith(task =>
             {
-                DataSnapshot result = task.Result;
-                userData = result.Child("id").Value.ToString() ?? null;
+                if (task.Result != null)
+                {
+                    DataSnapshot result = task.Result;
+                    userData = result.Child("id").Value.ToString() ?? null;
+                }
             });
         if (string.Compare(id, userData) == 0)
         {

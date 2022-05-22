@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,7 +25,18 @@ public static class GameDataStore
             PlayerPrefs.SetInt("LastUnloackedLevel", value);
         } 
     }
-    public static int Score { get; set; }
+    public static int Score 
+    {   get
+        {
+            return _score;
+        }
+        set
+        {
+            _score = value;
+        }
+    }
+
+    private static int _score;
     
     public static bool isFirsttime = true;
 
@@ -47,13 +59,21 @@ public static class GameDataStore
     }
 
 
-    public static void LoadData()
+    public static async void LoadData()
     {
-        //Load from Realtime Database
+        var _score = await FirebaseManager.LoadScore();
+        if(int.TryParse(_score, out GameDataStore._score))
+        {
+            Debug.Log("Data Loaded Successfully");
+        }
     }
-    public static void SaveData()
+    public static void SaveData(int score)
     {
-
+        _score += score;
+        FirebaseManager.SaveScore(_score, () => 
+        {
+            Debug.Log("Data Saved Successfully");
+        });
     }
     
 }

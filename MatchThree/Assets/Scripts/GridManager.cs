@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GridManager : Singleton<GridManager>
 {
@@ -14,6 +15,7 @@ public class GridManager : Singleton<GridManager>
     public Transform GridParent;
     public SpriteRenderer BG;
     public SpriteRenderer EGTItem;
+    public Image AcivementImage;
     //public int GridDimension = 8;
    
     public float Distance = 1.0f;
@@ -111,9 +113,10 @@ public class GridManager : Singleton<GridManager>
             StartingMoves = level.maxMoves;
             BG.sprite = level.background;
             EGTItem.sprite = level.EGTItem;
+            AcivementImage.sprite = level.achievementImageForlevel;
             TargetScore = level.tagetScore;
             LevelText.text = $"Level{level.levelNo}";
-            Time = new TimeSpan(0, 0, level.time);
+            Time = new TimeSpan(0, 0, level.time);   
             if (spriteToIDDictionary != null)
             {
                 spriteToIDDictionary.Clear();

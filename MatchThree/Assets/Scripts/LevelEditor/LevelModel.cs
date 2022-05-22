@@ -11,6 +11,7 @@ public class LevelModel : ScriptableObject
     public Sprite background;
     public Sprite EGTItem;
     public Sprite blockFrame;
+    public Sprite achievementImageForlevel;
     public int rows;
     public int cols;
     public int maxMoves;

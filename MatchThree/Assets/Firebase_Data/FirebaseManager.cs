@@ -22,9 +22,9 @@ public class FirebaseManager : MonoBehaviour
     {
         databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
         //--------------- To Add Dummy Data to Database -------------------
-        //for (int i = 1; i <= 1000; i++)
+        //for (int i = 1; i <= 50; i++)
         //{
-        //    SaveUsernameScore(i + "00000000000000000xsdadhasdhads00000" + i, i * Random.Range(1000, 10000));
+        //    SaveUsernameScore(i + "00000000000000000xsdadhasdhads00000" + i, i * UnityEngine.Random.Range(1000, 10000), true);
         //}
 
         //---------------To Check if the User's Local Key exisits in Database or not ----------------
@@ -80,7 +80,7 @@ public class FirebaseManager : MonoBehaviour
                         isUserFound = true;
                     }
                 }
-                if(!isUserFound)
+                if (!isUserFound)
                 {
                     onSucess?.Invoke(false);
                 }
@@ -95,23 +95,27 @@ public class FirebaseManager : MonoBehaviour
         IsUserValid = task1;
         onSucess?.Invoke();
     }
-    public async void SaveUsernameScore(string id, int score)
+    public async void SaveUsernameScore(string id, int score, bool ignoreKey = false)
     {
         User user1 = new User();
         user1.id = id;
         user1.score = score.ToString();
         var jsondata = JsonUtility.ToJson(user1);
         var key = FirebaseDatabase.DefaultInstance.GetReference("Users").Push().Key;
-        GameDataStore.Key = key;
+        if (ignoreKey)
+        {
+            GameDataStore.Key = key;
+        }
         await FirebaseDatabase.DefaultInstance.GetReference("Users").Child(key).SetRawJsonValueAsync(jsondata);
     }
 
     public async Task<List<User>> OnShowLeaderboardButtonClicked()
     {
-        SaveUsernameScore(UnityEngine.Random.Range(1, 10) + "00000000000000000xsdadhasdhads00000" + UnityEngine.Random.Range(1, 10), UnityEngine.Random.Range(1, 10) * UnityEngine.Random.Range(1000, 10000));
-        await PopulateLeaderBoard(5);
+        await PopulateLeaderBoard(0);
         if (LeaderboardList.Users.Count > 0)
         {
+            LeaderboardList.Users.Sort();
+            LeaderboardList.Users.Reverse();
             return LeaderboardList.Users;
         }
         else
@@ -125,7 +129,7 @@ public class FirebaseManager : MonoBehaviour
     public static async Task<string> LoadScore()
     {
         string res = null;
-        await FirebaseDatabase.DefaultInstance.GetReference("Users").Child(GameDataStore.Key).Child("score").GetValueAsync().ContinueWith(task => 
+        await FirebaseDatabase.DefaultInstance.GetReference("Users").Child(GameDataStore.Key).Child("score").GetValueAsync().ContinueWith(task =>
         {
             if (task.Result != null)
             {
@@ -141,7 +145,7 @@ public class FirebaseManager : MonoBehaviour
     {
         await FirebaseDatabase.DefaultInstance.GetReference("Users").Child(GameDataStore.Key).Child("score").SetValueAsync(score).ContinueWith(task =>
         {
-            if(task.IsCompleted)
+            if (task.IsCompleted)
             {
                 OnSucess?.Invoke();
             }
@@ -244,9 +248,20 @@ public class UserList
 }
 
 [System.Serializable]
-public class User
+public class User : IComparable
 {
     public string id;
     public string score;
+
+    public int CompareTo(object obj)
+    {
+        if (obj == null) return 1;
+        User _user = obj as User;
+        return Convert.ToInt64(CorrectString(this.score)).CompareTo(Convert.ToInt64(CorrectString(_user.score)));
+    }
+    private string CorrectString(string value)
+    {
+        return value.Trim(new Char[] { '\"' });
+    }
 }
 

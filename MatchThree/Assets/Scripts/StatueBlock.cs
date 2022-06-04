@@ -16,8 +16,4 @@ public class StatueBlock : MonoBehaviour
        particalSystem?.SetActive(forFirstTime);
        gameObject.SetActive(true); 
     }
-    public void DisableBlocks() {
-        gameObject.SetActive(false);
-    }
-
 }

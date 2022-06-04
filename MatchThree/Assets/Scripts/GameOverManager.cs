@@ -63,7 +63,7 @@ public class GameOverManager : MonoBehaviour
     public void GotoLevelSelection()
     {
         Destroy(GridManager.Instance.gameObject);
-        SceneManager.LoadScene("LevelSelection");
+        SceneManager.LoadScene("LevelSelection_New");
     }
     public void GotoMainMenu()
     {

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class SatueManager : MonoBehaviour
 {
@@ -11,15 +10,15 @@ public class SatueManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (!PlayerPrefs.HasKey("LastBlockofStatue"))
-        {
-            LastActivatedId = (GameDataStore.LastUnloackedLevel!=0)? GameDataStore.LastUnloackedLevel - 1:0;
-            PlayerPrefs.SetInt("LastBlockofStatue", LastActivatedId);
-        }
-        else
-        {
-            LastActivatedId = PlayerPrefs.GetInt("LastBlockofStatue");
-        }
+        //if (!PlayerPrefs.HasKey("LastBlockofStatue"))
+        //{
+        //    LastActivatedId = GameDataStore.LastUnloackedLevel-1;
+        //    PlayerPrefs.SetInt("LastBlockofStatue", LastActivatedId);
+        //}
+        //else 
+        //{
+        //    LastActivatedId = PlayerPrefs.GetInt("LastBlockofStatue");
+        //}
         FillUpProgress();
     }
 
@@ -31,12 +30,10 @@ public class SatueManager : MonoBehaviour
         }
 
     }
-    private void OnDisable()
+
+    // Update is called once per frame
+    void Update()
     {
-        statueBlocks.ForEach(x => x.DisableBlocks());
-    }
-    public void BackButtonClick() 
-    {
-        SceneManager.LoadScene("LevelSelection");
+        
     }
 }

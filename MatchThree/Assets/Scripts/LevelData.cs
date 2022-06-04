@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -25,11 +26,15 @@ public class LevelData : MonoBehaviour
     public Color Enabled;
     public Color Disabled;
 
+    public Color ButtonEnabled;
+    public Color ButtonDisabled;
+
+    public SpriteRenderer Platform;
 
     /// <summary>
     /// Reference of the Rocekt's Waypoints from current Planet to Next Planet
     /// </summary>
-    public RectTransform[] RocketWaypoints;
+    public Transform[] RocketWaypoints;
 
 
     //Reference of the Clickable Level Button
@@ -37,11 +42,10 @@ public class LevelData : MonoBehaviour
 
     [SerializeField]
     private TMP_Text planetButtonText;
-    private Image planet;
 
     private void Start()
     {
-        planet = GetComponent<Image>();
+        Level = Convert.ToInt32(gameObject.name);
         planetButtonText.text = Level.ToString();
         SetupLevel();
     }
@@ -54,15 +58,15 @@ public class LevelData : MonoBehaviour
     {
         if(!isActiveLevel)
         {
-            planet.color = Disabled;
-            levelButton.image.color = Disabled;
+            Platform.color = Disabled;
+            levelButton.image.color = ButtonDisabled;
             levelButton.interactable = false;
             planetButtonText.color = Disabled;
         }
         else
         {
-            planet.color = Enabled;
-            levelButton.image.color = Enabled;
+            Platform.color = Enabled;
+            levelButton.image.color = ButtonEnabled;
             levelButton.interactable = true;
             planetButtonText.color = Enabled;
         }

@@ -7,7 +7,7 @@ public class RocketController : MonoBehaviour
     /// <summary>
     /// The Rocket's Rect Transform
     /// </summary>
-    RectTransform rocket;
+    Transform rocket;
 
 
     /// <summary>
@@ -19,7 +19,7 @@ public class RocketController : MonoBehaviour
     /// <summary>
     /// The Waypoints on which the rocket will move on
     /// </summary>
-    RectTransform[] rocketWaypoints;
+    Transform[] rocketWaypoints;
 
 
     /// <summary>
@@ -44,7 +44,7 @@ public class RocketController : MonoBehaviour
 
     void Start()
     {
-        rocket = GetComponent<RectTransform>();
+        rocket = GetComponent<Transform>();
         if (levelSelectionManager != null)
         {
             rocketInitialPosition = levelSelectionManager.CurrentLevelData.RocketWaypoints[0].position;

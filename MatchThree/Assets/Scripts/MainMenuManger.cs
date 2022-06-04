@@ -12,6 +12,7 @@ public class MainMenuManger : MonoBehaviour
     public GameObject logo;
     public GameObject playButton;
     public GameObject leaderboardButton;
+    public GameObject soundButton;
     public GameObject leaderboardMenu;
     public GameObject minBalanceError;
     public GameObject ALDError;
@@ -20,8 +21,12 @@ public class MainMenuManger : MonoBehaviour
     public ALD Ald;
     public LoadALD loadALD;
     public int minNFT;
+    public TMP_Text SoundText;
+    public AudioSource audioSource;
     [SerializeField]
     private LeaderboardManager leaderBoardManager;
+    
+
     private void Awake()
     {
         loadALD.LoadData();
@@ -86,10 +91,12 @@ public class MainMenuManger : MonoBehaviour
         mainMenu.SetActive(true);
         playButton.SetActive(false);
         leaderboardButton.SetActive(false);
+        soundButton.SetActive(false);
     }
     public void ShowGameMenu() {
         playButton.SetActive(true);
-        leaderboardButton.SetActive(true); 
+        leaderboardButton.SetActive(true);
+        soundButton.SetActive(true);
     }
     public void CheckMinimumBalance() 
     {
@@ -106,5 +113,18 @@ public class MainMenuManger : MonoBehaviour
     public void QuitGame() 
     { 
         Application.Quit();
+    }
+    public void toggleSound() 
+    {
+        if (audioSource.mute)
+        {
+            //UNMUTE
+            audioSource.mute = false;
+            SoundText.text = "Sound : On";
+        }
+        else {
+            audioSource.mute = true;
+            SoundText.text = "Sound : Off";
+        }
     }
 }

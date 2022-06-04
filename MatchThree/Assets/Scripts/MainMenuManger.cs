@@ -40,12 +40,13 @@ public class MainMenuManger : MonoBehaviour
     }
     public void OnPlayButtonCLick()
     {
-        SceneManager.LoadScene("LevelSelection");
+        SceneManager.LoadScene("LevelSelection_New");
     }
     public void OnLeaderboardButtonClick()
     {
         leaderboardButton.SetActive(false);
         playButton.SetActive(false);
+        soundButton.SetActive(false);
         leaderboardMenu.SetActive(true);
         leaderBoardManager.PopulateLeaderBoard();
     }
@@ -53,6 +54,7 @@ public class MainMenuManger : MonoBehaviour
     {
         playButton.SetActive(true);
         leaderboardButton.SetActive(true);
+        soundButton.SetActive(true);
         leaderboardMenu.SetActive(false);
         leaderBoardManager.ClearLeaderboardContent();
     }

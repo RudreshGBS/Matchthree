@@ -2881,6 +2881,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SoundManager
       objectReference: {fileID: 0}
+    - target: {fileID: 1438527716975853832, guid: c749767057a244c22bcbe007c8dcf5b7, type: 3}
+      propertyPath: Mute
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1438527716975853833, guid: c749767057a244c22bcbe007c8dcf5b7, type: 3}
       propertyPath: GamePlayClip
       value: 

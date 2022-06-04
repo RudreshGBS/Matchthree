@@ -30,6 +30,8 @@ public class MainMenuManger : MonoBehaviour
     private void Awake()
     {
         loadALD.LoadData();
+        toggleSound();
+
     }
     private void OnEnable()
     {
@@ -120,11 +122,11 @@ public class MainMenuManger : MonoBehaviour
         {
             //UNMUTE
             audioSource.mute = false;
-            SoundText.text = "Sound : On";
+            SoundText.text = "Sound : OFF";
         }
         else {
             audioSource.mute = true;
-            SoundText.text = "Sound : Off";
+            SoundText.text = "Sound : ON";
         }
     }
 }

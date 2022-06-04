@@ -21,6 +21,7 @@ MonoBehaviour:
   background: {fileID: 21300000, guid: e62909e9f81f5b7469ca3d70860ada37, type: 3}
   EGTItem: {fileID: 21300000, guid: 0e379920ef64eeb4792198eaea484aa4, type: 3}
   blockFrame: {fileID: 21300000, guid: 3698e638cd44c484bb09bd9a3026876b, type: 3}
+  achievementImageForlevel: {fileID: 21300000, guid: 984093680d98d6045b4f9a610c57d641, type: 3}
   rows: 6
   cols: 5
   maxMoves: 12

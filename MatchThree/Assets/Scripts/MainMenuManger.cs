@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,12 +14,21 @@ public class MainMenuManger : MonoBehaviour
     public GameObject leaderboardButton;
     public GameObject leaderboardMenu;
     public GameObject minBalanceError;
+    public GameObject ALDError;
+    public TMP_Text ALDErrorMessage;
     public GetBalance getBalance;
+    public ALD Ald;
+    public LoadALD loadALD;
     public int minNFT;
     [SerializeField]
     private LeaderboardManager leaderBoardManager;
+    private void Awake()
+    {
+        loadALD.LoadData();
+    }
     private void OnEnable()
     {
+
         getBalance.onGettingBalance += CheckMinimumBalance;
     }
     public void OnPlayButtonCLick()
@@ -41,6 +51,9 @@ public class MainMenuManger : MonoBehaviour
     }
     public void ConnectWallet() {
         logo.SetActive(false);
+        if (Ald.ALDModel.isvalid)
+        {
+
 #if !UNITY_EDITOR
         if (GameDataStore.isFirsttime)
         {
@@ -57,11 +70,18 @@ public class MainMenuManger : MonoBehaviour
         }
 #endif
 #if UNITY_EDITOR
-        ShowMainMenu();
-        ShowGameMenu();
+            ShowMainMenu();
+            ShowGameMenu();
 #endif
-
+        }
+        else
+        {
+            ShowMainMenu();
+            ALDErrorMessage.text = Ald.ALDModel.message;
+            ALDError.SetActive(true);
+        }
     }
+    
     public void ShowMainMenu() { 
         mainMenu.SetActive(true);
         playButton.SetActive(false);

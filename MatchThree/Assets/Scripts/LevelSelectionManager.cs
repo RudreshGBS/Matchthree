@@ -1,6 +1,7 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LevelSelectionManager : MonoBehaviour
@@ -172,6 +173,12 @@ public class LevelSelectionManager : MonoBehaviour
         {
             levels[i].levelButton.interactable = enabled;
         }
+    }
+
+    public void ProgressButtonClicked()
+    {
+        SceneManager.UnloadSceneAsync("LevelSelection_New");
+        SceneManager.LoadScene("Statue");
     }
 
     private void OnEnable()

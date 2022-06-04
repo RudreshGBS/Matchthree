@@ -37,6 +37,7 @@ public class SatueManager : MonoBehaviour
     }
     public void BackButtonClick() 
     {
-        SceneManager.LoadScene("LevelSelection");
+        SceneManager.UnloadSceneAsync("Statue");
+        SceneManager.LoadScene("LevelSelection_New");
     }
 }

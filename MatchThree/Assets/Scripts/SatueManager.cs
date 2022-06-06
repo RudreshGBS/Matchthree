@@ -11,15 +11,8 @@ public class SatueManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (!PlayerPrefs.HasKey("LastBlockofStatue"))
-        {
-            LastActivatedId = (GameDataStore.LastUnloackedLevel!=0)? GameDataStore.LastUnloackedLevel - 1:0;
-            PlayerPrefs.SetInt("LastBlockofStatue", LastActivatedId);
-        }
-        else
-        {
-            LastActivatedId = PlayerPrefs.GetInt("LastBlockofStatue");
-        }
+       LastActivatedId = (GameDataStore.LastUnloackedLevel != 0) ? GameDataStore.LastUnloackedLevel - 1 : 0;
+       
         FillUpProgress();
     }
 

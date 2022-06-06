@@ -253,9 +253,9 @@ public class GridManager : Singleton<GridManager>
                 var powerUpTile = (TileScript1.powerUP == PowerUP.LShape) ? TileScript2 : TileScript1;
                 Bomb(powerUpTile);
                 NumMoves--;
-                var tempPos = tile1.transform.position;
-                tile1.position = tile2.position;
-                tile2.position = tempPos;
+                //var tempPos = tile1.transform.position;
+                //tile1.position = tile2.position;
+                //tile2.position = tempPos;
                 tile1.GetComponent<Tile>().powerUP = PowerUP.None;
                 tile2.GetComponent<Tile>().powerUP = PowerUP.None;
                 StartCoroutine(FillHoles());
@@ -289,7 +289,7 @@ public class GridManager : Singleton<GridManager>
                 return;
             }
 
-            
+            //Issue here
             List<SpriteRenderer> Tile1Matches = MatchCheckForPowerUps(TileScript1);
             List<SpriteRenderer> Tile2Matches = MatchCheckForPowerUps(TileScript2);
             if (Tile1Matches?.Count >= 3)

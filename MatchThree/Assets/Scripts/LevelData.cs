@@ -82,7 +82,6 @@ public class LevelData : MonoBehaviour
         // HINT use Level
         Debug.Log($"User Clicked an Active Level: { this.Level} Now load the Main Scene with this level");
         SceneManager.LoadScene("Main");
-        GameDataStore.isFirsttime = false;
 
 
     }

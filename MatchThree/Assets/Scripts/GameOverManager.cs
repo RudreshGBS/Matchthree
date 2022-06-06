@@ -63,11 +63,13 @@ public class GameOverManager : MonoBehaviour
     public void GotoLevelSelection()
     {
         Destroy(GridManager.Instance.gameObject);
+        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().name);
         SceneManager.LoadScene("LevelSelection_New");
     }
     public void GotoMainMenu()
     {
         Destroy(GridManager.Instance.gameObject);
+        SceneManager.UnloadSceneAsync(SceneManager.GetActiveScene().name);
         SceneManager.LoadScene("MainMenu");
     }
 }

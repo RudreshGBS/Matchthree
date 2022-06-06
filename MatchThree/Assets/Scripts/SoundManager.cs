@@ -24,6 +24,7 @@ public class SoundManager : Singleton<SoundManager>
     protected override void Awake()
     {
         base.Awake();
+        gameObject.AddComponent<AudioSource>();
         Source = GetComponent<AudioSource>();
     }
 

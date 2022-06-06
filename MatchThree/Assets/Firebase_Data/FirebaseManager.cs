@@ -18,9 +18,11 @@ public class FirebaseManager : MonoBehaviour
     public bool IsUserValid = false;
 
 
-    void Start()
+    void Awake()
     {
         databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
+        GameDataStore.Key = SystemInfo.deviceUniqueIdentifier;
+        Debug.Log($"device id: {GameDataStore.Key}");
         //--------------- To Add Dummy Data to Database -------------------
         //for (int i = 1; i <= 50; i++)
         //{
@@ -89,26 +91,23 @@ public class FirebaseManager : MonoBehaviour
         });
     }
 
-    public async void CheckExisitngUserInDatabaseWitKey(string key, string id, Action onSucess)
+    public async void CheckExisitngUserInDatabaseWitKeyAsync(string key, string id, Action onSucess)
     {
-        var task1 = await VerifyUsernameQuery(key, id);
+        bool task1 = await VerifyUsernameQuery(key, id);
         IsUserValid = task1;
         onSucess?.Invoke();
     }
-    public async void SaveUsernameScore(string id, int score, bool ignoreKey = false)
+    public async void SaveUsernameScore(string id, int score)
     {
         User user1 = new User();
         user1.id = id;
         user1.score = score.ToString();
         var jsondata = JsonUtility.ToJson(user1);
-        var key = FirebaseDatabase.DefaultInstance.GetReference("Users").Push().Key;
-        if (ignoreKey)
-        {
-            GameDataStore.Key = key;
-        }
-        await FirebaseDatabase.DefaultInstance.GetReference("Users").Child(key).SetRawJsonValueAsync(jsondata);
+        //string key = FirebaseDatabase.DefaultInstance.GetReference("Users").Push().Key;
+        await FirebaseDatabase.DefaultInstance.GetReference("Users").Child(GameDataStore.Key).SetRawJsonValueAsync(jsondata);
+        
     }
-
+   
     public async Task<List<User>> OnShowLeaderboardButtonClicked()
     {
         await PopulateLeaderBoard(0);
@@ -158,19 +157,17 @@ public class FirebaseManager : MonoBehaviour
 
     private async Task<bool> VerifyUsernameQuery(string key, string id)
     {
-        await FirebaseDatabase.DefaultInstance.GetReference("Users")
-            .Child(key)
-            //.OrderByValue()
-            .GetValueAsync()
-            .ContinueWith(task =>
+        await FirebaseDatabase.DefaultInstance.GetReference("Users").Child(key).GetValueAsync().ContinueWith(task =>
             {
                 if (task.Result != null)
                 {
                     DataSnapshot result = task.Result;
-                    userData = result.Child("id").Value.ToString() ?? null;
+                    userData = result.Child("id").Value.ToString() ?? "";
+                    Debug.Log($"user data :{userData}");
                 }
             });
-        if (string.Compare(id, userData) == 0)
+
+        if (!string.IsNullOrEmpty(userData) && string.Compare(id, userData) == 0)
         {
             return true;
         }

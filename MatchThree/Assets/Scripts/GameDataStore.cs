@@ -43,20 +43,11 @@ public static class GameDataStore
     public static bool CanMoveRocket = true;
 
     private static string key;
-    
-    public static string Key
-    {
-        get
-        {
-            key = PlayerPrefs.GetString("DatabaseKey");
-            return key ?? null;
-        }
-        set
-        {
-            key = value;
-            PlayerPrefs.SetString("DatabaseKey", value);
-        }
-    }
+
+    public static string Key;
+    public static string WalletId;
+    public static int WalletBal;
+   
 
 
     public static async void LoadData()

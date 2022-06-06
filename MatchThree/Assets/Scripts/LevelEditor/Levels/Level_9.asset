@@ -25,6 +25,6 @@ MonoBehaviour:
   achievementImageForlevel: {fileID: 21300000, guid: 962b291bf153f0c42a0add6ae981a937, type: 3}
   rows: 8
   cols: 5
-  maxMoves: 30
+  maxMoves: 20
   time: 120
   tagetScore: 3200

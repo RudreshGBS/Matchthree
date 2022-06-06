@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -13,30 +14,55 @@ public class MainMenuManger : MonoBehaviour
     public GameObject playButton;
     public GameObject leaderboardButton;
     public GameObject soundButton;
+    public GameObject quitButton;
     public GameObject leaderboardMenu;
     public GameObject minBalanceError;
-    public GameObject ALDError;
-    public TMP_Text ALDErrorMessage;
     public GetBalance getBalance;
-    public ALD Ald;
-    public LoadALD loadALD;
+    public FirebaseManager firebaseManager;
+
     public int minNFT;
     public TMP_Text SoundText;
+    public SoundManager soundManager;
     public AudioSource audioSource;
+    public GameObject quitBox;
     [SerializeField]
     private LeaderboardManager leaderBoardManager;
     
 
     private void Awake()
     {
-        loadALD.LoadData();
         toggleSound();
-
     }
+    private void Start()
+    {
+        soundManager = SoundManager.Instance;
+        audioSource = soundManager.GetComponent<AudioSource>();
+    }
+
+    private void ShowWalletIdAndBal()
+    {
+        if (!String.IsNullOrEmpty(GameDataStore.WalletId) && GameDataStore.WalletBal != null)
+        {
+            getBalance.accountText.text = $"{GameDataStore.WalletId}";
+            getBalance.resultText.text = $"your account balance is  {GameDataStore.WalletBal}";
+            getBalance.accountText.gameObject.SetActive(true);
+            getBalance.resultText.gameObject.SetActive(true);
+        }
+    }
+
     private void OnEnable()
     {
 
         getBalance.onGettingBalance += CheckMinimumBalance;
+    }
+
+    public void OpenQuitBox() { 
+    
+        quitBox.SetActive(true);
+    }
+    public void closeQuitBox()
+    {
+        quitBox.SetActive(false);
     }
     public void OnPlayButtonCLick()
     {
@@ -47,6 +73,7 @@ public class MainMenuManger : MonoBehaviour
         leaderboardButton.SetActive(false);
         playButton.SetActive(false);
         soundButton.SetActive(false);
+        quitButton.SetActive(false);
         leaderboardMenu.SetActive(true);
         leaderBoardManager.PopulateLeaderBoard();
     }
@@ -55,14 +82,12 @@ public class MainMenuManger : MonoBehaviour
         playButton.SetActive(true);
         leaderboardButton.SetActive(true);
         soundButton.SetActive(true);
+        quitButton.SetActive(true);
         leaderboardMenu.SetActive(false);
         leaderBoardManager.ClearLeaderboardContent();
     }
     public void ConnectWallet() {
         logo.SetActive(false);
-        if (Ald.ALDModel.isvalid)
-        {
-
 #if !UNITY_EDITOR
         if (GameDataStore.isFirsttime)
         {
@@ -79,16 +104,13 @@ public class MainMenuManger : MonoBehaviour
         }
 #endif
 #if UNITY_EDITOR
-            ShowMainMenu();
+        GameDataStore.WalletId = "jahfjhjsahdjkhsajkdh";
+        SetDB("jahfjhjsahdjkhsajkdh");
+
+        ShowMainMenu();
             ShowGameMenu();
-#endif
-        }
-        else
-        {
-            ShowMainMenu();
-            ALDErrorMessage.text = Ald.ALDModel.message;
-            ALDError.SetActive(true);
-        }
+#endif  
+        
     }
     
     public void ShowMainMenu() { 
@@ -101,8 +123,10 @@ public class MainMenuManger : MonoBehaviour
         playButton.SetActive(true);
         leaderboardButton.SetActive(true);
         soundButton.SetActive(true);
+        ShowWalletIdAndBal();
+
     }
-    public void CheckMinimumBalance() 
+    public void CheckMinimumBalance(string id) 
     {
         if (getBalance.bal >= minNFT)
         {
@@ -112,6 +136,7 @@ public class MainMenuManger : MonoBehaviour
         {
             minBalanceError.SetActive(true);
         }
+        SetDB(id);
         getBalance.onGettingBalance -= CheckMinimumBalance;
     }
     public void QuitGame() 
@@ -120,6 +145,9 @@ public class MainMenuManger : MonoBehaviour
     }
     public void toggleSound() 
     {
+        if (audioSource == null) {
+            return;
+        }
         if (audioSource.mute)
         {
             //UNMUTE
@@ -129,6 +157,54 @@ public class MainMenuManger : MonoBehaviour
         else {
             audioSource.mute = true;
             SoundText.text = "Sound : ON";
+        }
+    }
+
+   
+    
+    private void SetDB(string id)
+    {
+        Debug.Log($"Key : {GameDataStore.Key}");
+
+        if (string.IsNullOrEmpty(GameDataStore.Key))
+        {
+            Debug.Log("Local Database Key found, Searching for the Username in the Database");
+            firebaseManager.CheckExisitngUserInDatabaseWitKeyAsync(GameDataStore.Key, id, () =>
+            {
+                if (firebaseManager.IsUserValid)
+                {
+                    Debug.Log("Existing User found, Loading the Data Now!");
+                    GameDataStore.LoadData();
+
+
+                }
+                else
+                {
+                    Debug.Log("No User Found in database, Creating a new User");
+                    firebaseManager.SaveUsernameScore(id, 0);
+
+
+                }
+            });
+        }
+        else
+        {
+            Debug.Log("Local Database Key not found, Searching for the Username in the Database");
+            firebaseManager.CheckExisitngUserInDatabaseWithoutKey(id, (value) =>
+            {
+                if (value)
+                {
+                    Debug.Log("Username in Database found");
+                    GameDataStore.LoadData();
+
+                }
+                else
+                {
+                    Debug.Log("No User Found in database, Creating a new User");
+                    firebaseManager.SaveUsernameScore(id, 0);
+
+                }
+            });
         }
     }
 }

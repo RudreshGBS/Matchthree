@@ -85,6 +85,8 @@ public class LevelSelectionManager : MonoBehaviour
             GameDataStore.LastUnloackedLevel = 1;
             startFirsRocketLaunch = true;
         }
+        GameDataStore.isFirsttime = false;
+
     }
 
     void Start()
@@ -179,6 +181,11 @@ public class LevelSelectionManager : MonoBehaviour
     {
         SceneManager.UnloadSceneAsync("LevelSelection_New");
         SceneManager.LoadScene("Statue");
+    }
+
+    public void BackToMainMenu() {
+        SceneManager.UnloadSceneAsync("LevelSelection_New");
+        SceneManager.LoadScene("MainMenu");
     }
 
     private void OnEnable()

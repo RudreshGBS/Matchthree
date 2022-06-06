@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class MovingObject : MonoBehaviour
@@ -24,11 +25,17 @@ public class MovingObject : MonoBehaviour
     SpriteRenderer ElonGoatLogo;
     [SerializeField]
     MainMenuManger menuManger;
+    public ALD Ald;
+    public LoadALD loadALD;
+    public GameObject ALDError;
+    public TMP_Text ALDErrorMessage;
+
 
     private Vector3 initPosPlanet1;
     private Vector3 initPosPlanet2;
     private Vector3 initPosRocket;
     private Vector3 initPosStar;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,6 +46,7 @@ public class MovingObject : MonoBehaviour
         if (GameDataStore.isFirsttime)
         {
             StartSplashSceen();
+            loadALD.LoadData();
         }
         else 
         {
@@ -81,8 +89,19 @@ public class MovingObject : MonoBehaviour
     }
     private void StartMenu() 
     {
-        StartMovement();
-        menuManger.ConnectWallet();
+        //Todo add ALD here not 
+        if (GameDataStore.isFirsttime)
+        {
+            if (!Ald.ALDModel.isvalid)
+            {
+                ALDErrorMessage.text = Ald.ALDModel.message;
+                ALDError.SetActive(true);
+                return;
+            }
+        }
+            StartMovement();
+            menuManger.ConnectWallet();
+        
     }
     void SpriteColorUpdate(float value)
     { 

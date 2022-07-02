@@ -27,7 +27,10 @@ public class MainMenuManger : MonoBehaviour
     public GameObject quitBox;
     [SerializeField]
     private LeaderboardManager leaderBoardManager;
-    
+    [SerializeField]
+    private GameObject UserNamePopup;
+    [SerializeField]
+    public TMP_InputField usernameText;
 
     private void Awake()
     {
@@ -88,31 +91,51 @@ public class MainMenuManger : MonoBehaviour
     }
     public void ConnectWallet() {
         logo.SetActive(false);
-#if !UNITY_EDITOR
+        //#if !UNITY_EDITOR
+        //        if (GameDataStore.isFirsttime)
+        //        {
+
+        //        connectWalletObject.SetActive(true);
+        //        ShowMainMenu();
+        //        connectButton.SetActive(true);
+
+        //        }
+        //        else 
+        //        { 
+        //            ShowMainMenu();
+        //            ShowGameMenu();
+        //        }
+        //#endif
+        //#if UNITY_EDITOR
         if (GameDataStore.isFirsttime)
         {
-
-        connectWalletObject.SetActive(true);
-        ShowMainMenu();
-        connectButton.SetActive(true);
-
+            if (PlayerPrefs.HasKey("username"))
+            {
+                SetIDandDB(PlayerPrefs.GetString("username"));
+                ShowMainMenu();
+                ShowGameMenu();
+            }
+            else 
+            {
+                ShowMainMenu();
+                UserNamePopup.SetActive(true);
+            }
         }
         else 
         { 
             ShowMainMenu();
             ShowGameMenu();
         }
-#endif
-#if UNITY_EDITOR
-        GameDataStore.WalletId = "jahfjhjsahdjkhsajkdh";
-        SetDB("jahfjhjsahdjkhsajkdh");
-
-        ShowMainMenu();
-            ShowGameMenu();
-#endif  
+//#endif  
         
     }
-    
+
+    private void SetIDandDB(string username)
+    {
+        GameDataStore.WalletId = username;
+        SetDB(GameDataStore.WalletId);
+    }
+
     public void ShowMainMenu() { 
         mainMenu.SetActive(true);
         playButton.SetActive(false);
@@ -125,6 +148,12 @@ public class MainMenuManger : MonoBehaviour
         soundButton.SetActive(true);
         ShowWalletIdAndBal();
 
+    }
+    public void SubmitUserName() {
+        PlayerPrefs.SetString("username", usernameText.text);
+        SetIDandDB(usernameText.text);
+        UserNamePopup.SetActive(false);
+        ShowGameMenu();
     }
     public void CheckMinimumBalance(string id) 
     {

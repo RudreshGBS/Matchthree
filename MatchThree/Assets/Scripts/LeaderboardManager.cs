@@ -13,11 +13,13 @@ public class LeaderboardManager : MonoBehaviour
     private FirebaseManager firebaseManager;
     [SerializeField]
     private ScrollRect scrollRect;
-    protected RectTransform contentPanel;
-
+    [SerializeField]
+    private RectTransform contentPanel;
+    List<LeaderboardScorePanel> leaderboardElementList;
     public async void PopulateLeaderBoard()
     {
         var UserList = await firebaseManager.OnShowLeaderboardButtonClicked();
+        leaderboardElementList = new List<LeaderboardScorePanel>();
         if(UserList == null)
         {
             Debug.LogError("Leaderboard List is Empty!!");
@@ -33,9 +35,12 @@ public class LeaderboardManager : MonoBehaviour
                 Debug.Log($"wallet id= {GameDataStore.WalletId} ,  user.id : {user.id}");
                 Debug.Log($"wallet id== user.id : {user.id.Contains(GameDataStore.WalletId)}");
                 panel.SetPlayerScore(rank.ToString(),user.id, user.score, user.id.Contains(GameDataStore.WalletId));
+                leaderboardElementList.Add(panel);
                 rank++;
             }
         }
+        var CurrentUser =  leaderboardElementList.Find(currentUser => currentUser.Player.text.Contains(GameDataStore.WalletId));
+        SnapTo(CurrentUser.gameObject.GetComponent<RectTransform>());
     }
 
     public void ClearLeaderboardContent()
@@ -59,8 +64,10 @@ public class LeaderboardManager : MonoBehaviour
     {
         Canvas.ForceUpdateCanvases();
 
-        contentPanel.anchoredPosition =
+        Vector2 calculatedPos =
                 (Vector2)scrollRect.transform.InverseTransformPoint(contentPanel.position)
                 - (Vector2)scrollRect.transform.InverseTransformPoint(target.position);
+        contentPanel.anchoredPosition = new Vector2(contentPanel.anchoredPosition.x, calculatedPos.y);
+        Debug.Log($"x:{contentPanel.anchoredPosition.x}, y:{contentPanel.anchoredPosition.y}");
     }
 }

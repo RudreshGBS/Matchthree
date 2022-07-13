@@ -33,8 +33,10 @@ public class LeaderboardManager : MonoBehaviour
                 var O = Instantiate(leaderboardScorePanel, content.transform);
                 var panel = O.GetComponent<LeaderboardScorePanel>();
                 Debug.Log($"wallet id= {GameDataStore.WalletId} ,  user.id : {user.id}");
-                Debug.Log($"wallet id== user.id : {user.id.Contains(GameDataStore.WalletId)}");
-                panel.SetPlayerScore(rank.ToString(),user.id, user.score, user.id.Contains(GameDataStore.WalletId));
+                if (!string.IsNullOrEmpty(user.id)) 
+                { 
+                    panel.SetPlayerScore(rank.ToString(),user.id, user.score, user.id.Contains(GameDataStore.WalletId));
+                }
                 leaderboardElementList.Add(panel);
                 rank++;
             }

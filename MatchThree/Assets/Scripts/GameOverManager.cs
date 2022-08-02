@@ -51,7 +51,22 @@ public class GameOverManager : MonoBehaviour
         resultText.color = isPass?Color.green:Color.red;
         if(isPass)
         {
-            GameDataStore.SaveData(score);
+            Debug.Log($"CL: {GameDataStore.CurrentLevel}");
+            if (PlayerPrefs.HasKey($"Level{GameDataStore.CurrentLevel}"))
+            {
+                var lastscore = PlayerPrefs.GetInt($"Level{GameDataStore.CurrentLevel}");
+                Debug.Log($"lastscore = {lastscore} , Score = {score}");
+                if (score > lastscore) 
+                {
+                    PlayerPrefs.SetInt($"Level{GameDataStore.CurrentLevel}", score);
+                    GameDataStore.SaveData(score-lastscore);
+                }
+            }
+            else 
+            {
+                PlayerPrefs.SetInt($"Level{GameDataStore.CurrentLevel}", score);
+                GameDataStore.SaveData(score);
+            }
         }
     }
   

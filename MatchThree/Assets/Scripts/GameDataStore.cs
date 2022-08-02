@@ -52,10 +52,17 @@ public static class GameDataStore
 
     public static async void LoadData()
     {
-        var _score = await FirebaseManager.LoadScore();
-        if(int.TryParse(_score, out GameDataStore._score))
+        if (PlayerPrefs.HasKey("LastUnloackedLevel"))
         {
-            Debug.Log("Data Loaded Successfully");
+            var _score = await FirebaseManager.LoadScore();
+            if (int.TryParse(_score, out GameDataStore._score))
+            {
+                Debug.Log("Data Loaded Successfully");
+            }
+        }
+        else {
+            Debug.Log("Anti Cheat activate");
+            SaveData(0);
         }
     }
     public static void SaveData(int score)

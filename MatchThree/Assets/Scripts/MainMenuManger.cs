@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -150,6 +151,11 @@ public class MainMenuManger : MonoBehaviour
 
     }
     public void SubmitUserName() {
+        if (string.IsNullOrWhiteSpace(usernameText.text)) {
+            usernameText.placeholder.GetComponent<TMP_Text>().enabled = true;
+            usernameText.placeholder.GetComponent<TMP_Text>().text = "Invalid ID";
+            return;
+        }
         PlayerPrefs.SetString("username", usernameText.text);
         SetIDandDB(usernameText.text);
         UserNamePopup.SetActive(false);
@@ -204,15 +210,11 @@ public class MainMenuManger : MonoBehaviour
                 {
                     Debug.Log("Existing User found, Loading the Data Now!");
                     GameDataStore.LoadData();
-
-
                 }
                 else
                 {
                     Debug.Log("No User Found in database, Creating a new User");
                     firebaseManager.SaveUsernameScore(id, 0);
-
-
                 }
             });
         }
